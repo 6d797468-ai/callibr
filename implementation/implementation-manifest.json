@@ -1,0 +1,66 @@
+{
+  "generated_on": "2026-07-28",
+  "project": "Callibr",
+  "current_phase": "P4",
+  "current_goal": "Stabilize detailed evaluation, session reports and the next Procedure Engine",
+  "mvp": {
+    "name": "Callibr MVP — Text Simulation Core",
+    "domain_pack": "Support Client / SAV",
+    "primary_user": "Agent en formation",
+    "success_path": [
+      "login",
+      "select_scenario",
+      "start_simulation",
+      "chat_with_simulated_customer",
+      "execute_crm_actions",
+      "end_session",
+      "generate_evaluation",
+      "view_report"
+    ]
+  },
+  "sprints": [
+    {
+      "id": "S00",
+      "name": "Bootstrap",
+      "deliverable": "local app starts with API, frontend, postgres and redis",
+      "status": "done"
+    },
+    {
+      "id": "S01",
+      "name": "Kernel Minimal",
+      "deliverable": "command bus, event bus, config and logging",
+      "status": "initial_done"
+    },
+    {
+      "id": "S02",
+      "name": "Identity & Tenant Context",
+      "deliverable": "demo user authenticated with tenant context",
+      "status": "demo_done"
+    },
+    {
+      "id": "S03",
+      "name": "Simulation Core",
+      "deliverable": "scenario catalog, session lifecycle, messages and evaluation",
+      "status": "initial_done"
+    },
+    {
+      "id": "S04",
+      "name": "Persistence & Audit Trail",
+      "deliverable": "session store, audit store, PostgreSQL adapters and audit API",
+      "status": "initial_done"
+    },
+    {
+      "id": "S05",
+      "name": "Local IAM MVP",
+      "deliverable": "local login, signed bearer token and identity stores",
+      "status": "initial_done"
+    },
+    {
+      "id": "S06",
+      "name": "Detailed Evaluation & Session Report",
+      "deliverable": "scorecard criteria, session report API, frontend report and tenant-safe reads",
+      "status": "initial_done"
+    }
+  ],
+  "next_action": "Add Procedure Engine MVP and PostgreSQL integration tests"
+}

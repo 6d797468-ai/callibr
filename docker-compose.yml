@@ -1,0 +1,55 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/api.Dockerfile
+    env_file:
+      - .env
+    environment:
+      CALLIBR_DATABASE_URL: postgresql+psycopg://callibr:callibr@postgres:5432/callibr
+      CALLIBR_REDIS_URL: redis://redis:6379/0
+      DB_HOST: postgres
+      DB_PORT: 5432
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  frontend:
+    build:
+      context: apps/frontend
+      dockerfile: ../../infrastructure/docker/frontend.Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_CALLIBR_API_BASE_URL: http://localhost:8000
+    depends_on:
+      - api
+
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: callibr
+      POSTGRES_PASSWORD: callibr
+      POSTGRES_DB: callibr
+    ports:
+      - "15432:5432"
+    volumes:
+      - callibr_postgres_data:/var/lib/postgresql/data
+      - ./infrastructure/postgres:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U callibr -d callibr"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "16379:6379"
+
+volumes:
+  callibr_postgres_data:

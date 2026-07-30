@@ -1,0 +1,83 @@
+[project]
+name = "callibr"
+version = "0.1.0"
+description = "Callibr AI contact center simulation platform"
+requires-python = ">=3.13"
+dependencies = [
+  "alembic>=1.13.0",
+  "fastapi>=0.115.0",
+  "openai>=1.40.0",
+  "pydantic>=2.8.0",
+  "pydantic-settings>=2.4.0",
+  "psycopg[binary]>=3.2.0",
+  "uvicorn[standard]>=0.30.0",
+  "prometheus-client>=0.20.0",
+]
+
+[build-system]
+requires = ["setuptools>=75.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = [
+  "apps/api/src",
+  "packages/kernel/src",
+  "packages/contracts/src",
+  "packages/persistence/src",
+  "packages/shared/src",
+  "packages/telemetry/src",
+  "packages/seed/src",
+  "platform/identity/src",
+  "engines/crm/src",
+  "engines/conversation/src",
+  "engines/evaluation/src",
+  "engines/persona/src",
+  "engines/procedure/src",
+  "engines/rule/src",
+  "engines/scenario/src",
+  "engines/simulation/src",
+  "engines/planning/src",
+  "engines/director/src",
+  "engines/voice/src",
+]
+
+[dependency-groups]
+dev = [
+  "httpx>=0.27.0",
+  "pytest>=8.3.0",
+  "ruff>=0.6.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["apps/api/tests", "tests"]
+pythonpath = [
+  "apps/api/src",
+  "packages/kernel/src",
+  "packages/contracts/src",
+  "packages/persistence/src",
+  "packages/shared/src",
+  "packages/telemetry/src",
+  "packages/seed/src",
+  "platform/identity/src",
+  "engines/crm/src",
+  "engines/conversation/src",
+  "engines/evaluation/src",
+  "engines/persona/src",
+  "engines/procedure/src",
+  "engines/rule/src",
+  "engines/scenario/src",
+  "engines/simulation/src",
+  "engines/planning/src",
+  "engines/director/src",
+  "engines/voice/src",
+]
+markers = [
+  "integration: Integration tests that require external services (PostgreSQL, Redis, etc.)",
+]
