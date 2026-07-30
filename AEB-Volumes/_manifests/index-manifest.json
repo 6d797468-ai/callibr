@@ -1,0 +1,61 @@
+{
+  "generated_on": "2026-07-27",
+  "indexes": [
+    {
+      "title": "Index ADR",
+      "path": "_indexes/ADR-INDEX.md",
+      "line_count": 297,
+      "byte_size": 65925
+    },
+    {
+      "title": "Index API",
+      "path": "_indexes/API-INDEX.md",
+      "line_count": 215,
+      "byte_size": 46989
+    },
+    {
+      "title": "Index Data Models",
+      "path": "_indexes/DATA-MODEL-INDEX.md",
+      "line_count": 223,
+      "byte_size": 40217
+    },
+    {
+      "title": "Index Engines & Services",
+      "path": "_indexes/ENGINE-INDEX.md",
+      "line_count": 1032,
+      "byte_size": 174482
+    },
+    {
+      "title": "Index Événements",
+      "path": "_indexes/EVENT-INDEX.md",
+      "line_count": 122,
+      "byte_size": 17365
+    },
+    {
+      "title": "Rapport De Normalisation Éditoriale",
+      "path": "_indexes/NORMALIZATION-REPORT.md",
+      "line_count": 57,
+      "byte_size": 1907
+    },
+    {
+      "title": "Index Catalogue Scénarios",
+      "path": "_indexes/SCENARIO-CATALOG-INDEX.md",
+      "line_count": 179,
+      "byte_size": 30246
+    },
+    {
+      "title": "Matrice De Traçabilité Des Volumes",
+      "path": "_indexes/TRACEABILITY-MATRIX.md",
+      "line_count": 133,
+      "byte_size": 33959
+    }
+  ],
+  "normalization": [
+    {
+      "title": "Plan De Renumérotation Contrôlée Des Volumes",
+      "path": "_normalization/VOLUME-RENUMBERING-PLAN.md",
+      "line_count": 95,
+      "byte_size": 4113
+    }
+  ]
+}

@@ -1,0 +1,1121 @@
+{
+  "generated_on": "2026-07-27",
+  "volumes": [
+    {
+      "phase": "A",
+      "volume_id": "A00",
+      "title": "Volume A00-A02 — Fondations, vision, architecture et constitution engineering",
+      "path": "phase-a-foundations/volume-a00-a02-foundations-vision-architecture-constitution.md",
+      "line_count": 347,
+      "word_count_estimate": 1163,
+      "byte_size": 8463
+    },
+    {
+      "phase": "B",
+      "volume_id": "B01",
+      "title": "Volume B01 — Domain Driven Design (DDD)",
+      "path": "phase-b-business-architecture/volume-b01-domain-driven-design-ddd.md",
+      "line_count": 532,
+      "word_count_estimate": 835,
+      "byte_size": 8998
+    },
+    {
+      "phase": "B",
+      "volume_id": "B02",
+      "title": "Volume B02 — Simulation Operating Engine (SOE)",
+      "path": "phase-b-business-architecture/volume-b02-simulation-operating-engine-soe.md",
+      "line_count": 818,
+      "word_count_estimate": 1125,
+      "byte_size": 8425
+    },
+    {
+      "phase": "B",
+      "volume_id": "B03",
+      "title": "Volume B03 — AI Runtime Architecture & Prompt Orchestration Engine (POE)",
+      "path": "phase-b-business-architecture/volume-b03-ai-runtime-architecture-prompt-orchestration-engine-poe.md",
+      "line_count": 552,
+      "word_count_estimate": 1227,
+      "byte_size": 9202
+    },
+    {
+      "phase": "B",
+      "volume_id": "B04",
+      "title": "Volume B04 — Customer Persona Engine & Emotion Engine",
+      "path": "phase-b-business-architecture/volume-b04-customer-persona-engine-emotion-engine.md",
+      "line_count": 610,
+      "word_count_estimate": 966,
+      "byte_size": 7358
+    },
+    {
+      "phase": "B",
+      "volume_id": "B04 PART 2",
+      "title": "Volume B04 (partie 2) — Customer Persona Engine & Behavior Simulation Engine (BSE)",
+      "path": "phase-b-business-architecture/volume-b04-part-2-customer-persona-engine-behavior-simulation-engine-bse.md",
+      "line_count": 625,
+      "word_count_estimate": 1041,
+      "byte_size": 7834
+    },
+    {
+      "phase": "B",
+      "volume_id": "B05",
+      "title": "Volume B05 — Scenario Engine & Procedure Engine",
+      "path": "phase-b-business-architecture/volume-b05-scenario-engine-procedure-engine.md",
+      "line_count": 661,
+      "word_count_estimate": 1151,
+      "byte_size": 8669
+    },
+    {
+      "phase": "B",
+      "volume_id": "B06",
+      "title": "Volume B06 — Rule Engine & Decision Engine",
+      "path": "phase-b-business-architecture/volume-b06-rule-engine-decision-engine.md",
+      "line_count": 555,
+      "word_count_estimate": 1100,
+      "byte_size": 8138
+    },
+    {
+      "phase": "B",
+      "volume_id": "B07",
+      "title": "Volume B07 — CRM Runtime Engine (CRE)",
+      "path": "phase-b-business-architecture/volume-b07-crm-runtime-engine-cre.md",
+      "line_count": 627,
+      "word_count_estimate": 1073,
+      "byte_size": 7884
+    },
+    {
+      "phase": "B",
+      "volume_id": "B08",
+      "title": "Volume B08 — Conversation Runtime Engine (CoRE)",
+      "path": "phase-b-business-architecture/volume-b08-conversation-runtime-engine-core.md",
+      "line_count": 595,
+      "word_count_estimate": 1106,
+      "byte_size": 8444
+    },
+    {
+      "phase": "B",
+      "volume_id": "B09",
+      "title": "Volume B09 — Evaluation & Quality Intelligence Engine (EQI)",
+      "path": "phase-b-business-architecture/volume-b09-evaluation-quality-intelligence-engine-eqi.md",
+      "line_count": 536,
+      "word_count_estimate": 1027,
+      "byte_size": 7766
+    },
+    {
+      "phase": "B",
+      "volume_id": "B10",
+      "title": "Volume B10 — Analytics, Learning Intelligence & Coaching Platform (ALICP)",
+      "path": "phase-b-business-architecture/volume-b10-analytics-learning-intelligence-coaching-platform-alicp.md",
+      "line_count": 718,
+      "word_count_estimate": 1070,
+      "byte_size": 7898
+    },
+    {
+      "phase": "C",
+      "volume_id": "C01",
+      "title": "Volume C01 — AI Training Operating System (ATOS) Kernel",
+      "path": "phase-c-platform-core/volume-c01-ai-training-operating-system-atos-kernel.md",
+      "line_count": 616,
+      "word_count_estimate": 1132,
+      "byte_size": 9051
+    },
+    {
+      "phase": "C",
+      "volume_id": "C02",
+      "title": "Volume C02 — Event Bus, Event Sourcing & CQRS",
+      "path": "phase-c-platform-core/volume-c02-event-bus-event-sourcing-cqrs.md",
+      "line_count": 658,
+      "word_count_estimate": 1108,
+      "byte_size": 8783
+    },
+    {
+      "phase": "C",
+      "volume_id": "C03",
+      "title": "Volume C03 — Enterprise Multi-Tenant SaaS Architecture",
+      "path": "phase-c-platform-core/volume-c03-enterprise-multi-tenant-saas-architecture.md",
+      "line_count": 583,
+      "word_count_estimate": 1127,
+      "byte_size": 8146
+    },
+    {
+      "phase": "C",
+      "volume_id": "C04",
+      "title": "Volume C04 — API Gateway, Integration Platform & SDK",
+      "path": "phase-c-platform-core/volume-c04-api-gateway-integration-platform-sdk.md",
+      "line_count": 580,
+      "word_count_estimate": 1075,
+      "byte_size": 8107
+    },
+    {
+      "phase": "C",
+      "volume_id": "C05",
+      "title": "Volume C05 — Runtime Infrastructure, Platform Engineering & Cloud Architecture",
+      "path": "phase-c-platform-core/volume-c05-runtime-infrastructure-platform-engineering-cloud-architecture.md",
+      "line_count": 597,
+      "word_count_estimate": 1105,
+      "byte_size": 9077
+    },
+    {
+      "phase": "D",
+      "volume_id": "D01",
+      "title": "Volume D01 — Monorepo, Code Organization & Engineering Standards",
+      "path": "phase-d-engineering-standards/volume-d01-monorepo-code-organization-engineering-standards.md",
+      "line_count": 576,
+      "word_count_estimate": 1155,
+      "byte_size": 8780
+    },
+    {
+      "phase": "D",
+      "volume_id": "D02",
+      "title": "Volume D02 — Engineering Quality, Testing, DevSecOps & Governance",
+      "path": "phase-d-engineering-standards/volume-d02-engineering-quality-testing-devsecops-governance.md",
+      "line_count": 573,
+      "word_count_estimate": 1076,
+      "byte_size": 7720
+    },
+    {
+      "phase": "D",
+      "volume_id": "D03",
+      "title": "Volume D03 — Engine Implementation Blueprint",
+      "path": "phase-d-engineering-standards/volume-d03-engine-implementation-blueprint.md",
+      "line_count": 660,
+      "word_count_estimate": 1063,
+      "byte_size": 8481
+    },
+    {
+      "phase": "E",
+      "volume_id": "E01",
+      "title": "Volume E01 — AI Engineering Framework & Prompt Orchestration",
+      "path": "phase-e-ai-engineering/volume-e01-ai-engineering-framework-prompt-orchestration.md",
+      "line_count": 607,
+      "word_count_estimate": 1038,
+      "byte_size": 7528
+    },
+    {
+      "phase": "E",
+      "volume_id": "E02",
+      "title": "Volume E02 — OpenCode Development Playbook (Master Prompt)",
+      "path": "phase-e-ai-engineering/volume-e02-opencode-development-playbook-master-prompt.md",
+      "line_count": 453,
+      "word_count_estimate": 1290,
+      "byte_size": 9274
+    },
+    {
+      "phase": "E",
+      "volume_id": "E03",
+      "title": "Volume E03 — AI Coding Governance & Autonomous Development Lifecycle",
+      "path": "phase-e-ai-engineering/volume-e03-ai-coding-governance-autonomous-development-lifecycle.md",
+      "line_count": 684,
+      "word_count_estimate": 1230,
+      "byte_size": 9079
+    },
+    {
+      "phase": "E",
+      "volume_id": "E04",
+      "title": "Volume E04 — Engineering Knowledge Base & RAG Architecture",
+      "path": "phase-e-ai-engineering/volume-e04-engineering-knowledge-base-rag-architecture.md",
+      "line_count": 551,
+      "word_count_estimate": 1100,
+      "byte_size": 7748
+    },
+    {
+      "phase": "E",
+      "volume_id": "E05",
+      "title": "Volume E05 — LLMOps, AI Runtime & Cost Optimization",
+      "path": "phase-e-ai-engineering/volume-e05-llmops-ai-runtime-cost-optimization.md",
+      "line_count": 464,
+      "word_count_estimate": 1087,
+      "byte_size": 8182
+    },
+    {
+      "phase": "E",
+      "volume_id": "E06",
+      "title": "Volume E06 — AI Validation, Benchmarking & Continuous Improvement Framework",
+      "path": "phase-e-ai-engineering/volume-e06-ai-validation-benchmarking-continuous-improvement-framework.md",
+      "line_count": 511,
+      "word_count_estimate": 1107,
+      "byte_size": 8189
+    },
+    {
+      "phase": "F",
+      "volume_id": "F01",
+      "title": "Volume F01 — Monorepo Blueprint & Repository Architecture",
+      "path": "phase-f-delivery-operations/volume-f01-monorepo-blueprint-repository-architecture.md",
+      "line_count": 613,
+      "word_count_estimate": 888,
+      "byte_size": 6954
+    },
+    {
+      "phase": "F",
+      "volume_id": "F02",
+      "title": "Volume F02 — API Contracts & Communication Architecture",
+      "path": "phase-f-delivery-operations/volume-f02-api-contracts-communication-architecture.md",
+      "line_count": 456,
+      "word_count_estimate": 906,
+      "byte_size": 7544
+    },
+    {
+      "phase": "F",
+      "volume_id": "F03",
+      "title": "Volume F03 — PostgreSQL Enterprise Data Model",
+      "path": "phase-f-delivery-operations/volume-f03-postgresql-enterprise-data-model.md",
+      "line_count": 571,
+      "word_count_estimate": 915,
+      "byte_size": 7947
+    },
+    {
+      "phase": "F",
+      "volume_id": "F04",
+      "title": "Volume F04 — Frontend Architecture & Design System",
+      "path": "phase-f-delivery-operations/volume-f04-frontend-architecture-design-system.md",
+      "line_count": 475,
+      "word_count_estimate": 960,
+      "byte_size": 8038
+    },
+    {
+      "phase": "F",
+      "volume_id": "F05",
+      "title": "Volume F05 — Implementation Roadmap & Sprint Execution Plan",
+      "path": "phase-f-delivery-operations/volume-f05-implementation-roadmap-sprint-execution-plan.md",
+      "line_count": 631,
+      "word_count_estimate": 941,
+      "byte_size": 7027
+    },
+    {
+      "phase": "F",
+      "volume_id": "F06",
+      "title": "Volume F06 — Production Runbook & Enterprise Operations",
+      "path": "phase-f-delivery-operations/volume-f06-production-runbook-enterprise-operations.md",
+      "line_count": 586,
+      "word_count_estimate": 1173,
+      "byte_size": 8867
+    },
+    {
+      "phase": "G",
+      "volume_id": "G00",
+      "title": "Volume G00 — Domain Pack Framework",
+      "path": "phase-g-contact-center-packs/volume-g00-domain-pack-framework.md",
+      "line_count": 482,
+      "word_count_estimate": 819,
+      "byte_size": 6517
+    },
+    {
+      "phase": "G",
+      "volume_id": "G01",
+      "title": "Volume G01 — Domain Pack — Service Après-Vente (SAV)",
+      "path": "phase-g-contact-center-packs/volume-g01-domain-pack-service-apres-vente-sav.md",
+      "line_count": 444,
+      "word_count_estimate": 1107,
+      "byte_size": 7873
+    },
+    {
+      "phase": "G",
+      "volume_id": "G02",
+      "title": "Volume G02 — Domain Pack — Support Technique N1 / N2",
+      "path": "phase-g-contact-center-packs/volume-g02-domain-pack-support-technique-n1-n2.md",
+      "line_count": 479,
+      "word_count_estimate": 1126,
+      "byte_size": 7970
+    },
+    {
+      "phase": "G",
+      "volume_id": "G03",
+      "title": "Volume G03 — Domain Pack — Télévente & Vente Conseil",
+      "path": "phase-g-contact-center-packs/volume-g03-domain-pack-televente-vente-conseil.md",
+      "line_count": 409,
+      "word_count_estimate": 1163,
+      "byte_size": 8040
+    },
+    {
+      "phase": "G",
+      "volume_id": "G04",
+      "title": "Volume G04 — Domain Pack — Rétention & Fidélisation",
+      "path": "phase-g-contact-center-packs/volume-g04-domain-pack-retention-fidelisation.md",
+      "line_count": 349,
+      "word_count_estimate": 1111,
+      "byte_size": 7927
+    },
+    {
+      "phase": "G",
+      "volume_id": "G05",
+      "title": "Volume G05 — Domain Pack — Recouvrement",
+      "path": "phase-g-contact-center-packs/volume-g05-domain-pack-recouvrement.md",
+      "line_count": 397,
+      "word_count_estimate": 1179,
+      "byte_size": 8465
+    },
+    {
+      "phase": "G",
+      "volume_id": "G06",
+      "title": "Volume G06 — Domain Pack — Back Office",
+      "path": "phase-g-contact-center-packs/volume-g06-domain-pack-back-office.md",
+      "line_count": 511,
+      "word_count_estimate": 972,
+      "byte_size": 7163
+    },
+    {
+      "phase": "G",
+      "volume_id": "G06 PART 2",
+      "title": "Volume G06 (partie 2) — Domain Pack — Back Office",
+      "path": "phase-g-contact-center-packs/volume-g06-part-2-domain-pack-back-office.md",
+      "line_count": 419,
+      "word_count_estimate": 1057,
+      "byte_size": 7391
+    },
+    {
+      "phase": "G",
+      "volume_id": "G07",
+      "title": "Volume G07 — Domain Pack — Conduite d'Activité & Dispatch",
+      "path": "phase-g-contact-center-packs/volume-g07-domain-pack-conduite-d-activite-dispatch.md",
+      "line_count": 359,
+      "word_count_estimate": 1057,
+      "byte_size": 7389
+    },
+    {
+      "phase": "G",
+      "volume_id": "G08",
+      "title": "Volume G08 — Domain Pack — Assurance Qualité (QA) & Coaching",
+      "path": "phase-g-contact-center-packs/volume-g08-domain-pack-assurance-qualite-qa-coaching.md",
+      "line_count": 527,
+      "word_count_estimate": 1149,
+      "byte_size": 8606
+    },
+    {
+      "phase": "G",
+      "volume_id": "G09",
+      "title": "Volume G09 — Domain Pack — Workforce Management (WFM)",
+      "path": "phase-g-contact-center-packs/volume-g09-domain-pack-workforce-management-wfm.md",
+      "line_count": 360,
+      "word_count_estimate": 1148,
+      "byte_size": 8023
+    },
+    {
+      "phase": "G",
+      "volume_id": "G10",
+      "title": "Volume G10 — Domain Pack — Supervision Temps Réel (Real-Time Command Center)",
+      "path": "phase-g-contact-center-packs/volume-g10-domain-pack-supervision-temps-reel-real-time-command-center.md",
+      "line_count": 371,
+      "word_count_estimate": 1223,
+      "byte_size": 8178
+    },
+    {
+      "phase": "G",
+      "volume_id": "G11",
+      "title": "Volume G11 — Domain Pack — Customer Success",
+      "path": "phase-g-contact-center-packs/volume-g11-domain-pack-customer-success.md",
+      "line_count": 325,
+      "word_count_estimate": 1051,
+      "byte_size": 7137
+    },
+    {
+      "phase": "G",
+      "volume_id": "G12",
+      "title": "Volume G12 — Domain Pack — Help Desk ITIL",
+      "path": "phase-g-contact-center-packs/volume-g12-domain-pack-help-desk-itil.md",
+      "line_count": 360,
+      "word_count_estimate": 989,
+      "byte_size": 6724
+    },
+    {
+      "phase": "G",
+      "volume_id": "G13",
+      "title": "Volume G13 — Domain Pack — Incident & Problem Management",
+      "path": "phase-g-contact-center-packs/volume-g13-domain-pack-incident-problem-management.md",
+      "line_count": 325,
+      "word_count_estimate": 987,
+      "byte_size": 6908
+    },
+    {
+      "phase": "G",
+      "volume_id": "G14",
+      "title": "Volume G14 — Domain Pack — Banking Contact Center",
+      "path": "phase-g-contact-center-packs/volume-g14-domain-pack-banking-contact-center.md",
+      "line_count": 564,
+      "word_count_estimate": 1015,
+      "byte_size": 7427
+    },
+    {
+      "phase": "G",
+      "volume_id": "G15",
+      "title": "Volume G15 — Domain Pack — Insurance Contact Center",
+      "path": "phase-g-contact-center-packs/volume-g15-domain-pack-insurance-contact-center.md",
+      "line_count": 346,
+      "word_count_estimate": 1070,
+      "byte_size": 7516
+    },
+    {
+      "phase": "G",
+      "volume_id": "G16",
+      "title": "Volume G16 — Domain Pack — Healthcare Contact Center",
+      "path": "phase-g-contact-center-packs/volume-g16-domain-pack-healthcare-contact-center.md",
+      "line_count": 325,
+      "word_count_estimate": 1071,
+      "byte_size": 7655
+    },
+    {
+      "phase": "G",
+      "volume_id": "G17",
+      "title": "Volume G17 — Domain Pack — E-commerce & Retail",
+      "path": "phase-g-contact-center-packs/volume-g17-domain-pack-e-commerce-retail.md",
+      "line_count": 333,
+      "word_count_estimate": 1023,
+      "byte_size": 6924
+    },
+    {
+      "phase": "G",
+      "volume_id": "G18",
+      "title": "Volume G18 — Domain Pack — Public Services & Administration",
+      "path": "phase-g-contact-center-packs/volume-g18-domain-pack-public-services-administration.md",
+      "line_count": 331,
+      "word_count_estimate": 974,
+      "byte_size": 7062
+    },
+    {
+      "phase": "G",
+      "volume_id": "G19",
+      "title": "Volume G19 — Domain Pack — Collections avancées & Contentieux",
+      "path": "phase-g-contact-center-packs/volume-g19-domain-pack-collections-avancees-contentieux.md",
+      "line_count": 389,
+      "word_count_estimate": 1294,
+      "byte_size": 9075
+    },
+    {
+      "phase": "G",
+      "volume_id": "G20",
+      "title": "Volume G20 — Domain Pack — Omnichannel & Digital Engagement",
+      "path": "phase-g-contact-center-packs/volume-g20-domain-pack-omnichannel-digital-engagement.md",
+      "line_count": 552,
+      "word_count_estimate": 1208,
+      "byte_size": 8326
+    },
+    {
+      "phase": "H",
+      "volume_id": "H01",
+      "title": "Volume H01 — AI Platform Core Architecture",
+      "path": "phase-h-ai-platform-enterprise/volume-h01-ai-platform-core-architecture.md",
+      "line_count": 629,
+      "word_count_estimate": 1199,
+      "byte_size": 9812
+    },
+    {
+      "phase": "H",
+      "volume_id": "H02",
+      "title": "Volume H02 — Agent Runtime Architecture",
+      "path": "phase-h-ai-platform-enterprise/volume-h02-agent-runtime-architecture.md",
+      "line_count": 655,
+      "word_count_estimate": 1086,
+      "byte_size": 8863
+    },
+    {
+      "phase": "H",
+      "volume_id": "H03",
+      "title": "Volume H03 — Prompt Engineering Platform Architecture",
+      "path": "phase-h-ai-platform-enterprise/volume-h03-prompt-engineering-platform-architecture.md",
+      "line_count": 758,
+      "word_count_estimate": 1163,
+      "byte_size": 8891
+    },
+    {
+      "phase": "H",
+      "volume_id": "H04",
+      "title": "Volume H04 — LLM Gateway & Model Routing Architecture",
+      "path": "phase-h-ai-platform-enterprise/volume-h04-llm-gateway-model-routing-architecture.md",
+      "line_count": 673,
+      "word_count_estimate": 1082,
+      "byte_size": 8280
+    },
+    {
+      "phase": "H",
+      "volume_id": "H05",
+      "title": "Volume H05 — Memory & Context Architecture",
+      "path": "phase-h-ai-platform-enterprise/volume-h05-memory-context-architecture.md",
+      "line_count": 723,
+      "word_count_estimate": 1138,
+      "byte_size": 8892
+    },
+    {
+      "phase": "H",
+      "volume_id": "H06",
+      "title": "Volume H06 — Tool Calling Platform Architecture",
+      "path": "phase-h-ai-platform-enterprise/volume-h06-tool-calling-platform-architecture.md",
+      "line_count": 781,
+      "word_count_estimate": 1158,
+      "byte_size": 8923
+    },
+    {
+      "phase": "H",
+      "volume_id": "H07",
+      "title": "Volume H07 — Multi-Agent Orchestration Architecture",
+      "path": "phase-h-ai-platform-enterprise/volume-h07-multi-agent-orchestration-architecture.md",
+      "line_count": 754,
+      "word_count_estimate": 1117,
+      "byte_size": 9301
+    },
+    {
+      "phase": "H",
+      "volume_id": "H08",
+      "title": "Volume H08 — AI Safety & Guardrails Architecture",
+      "path": "phase-h-ai-platform-enterprise/volume-h08-ai-safety-guardrails-architecture.md",
+      "line_count": 776,
+      "word_count_estimate": 1173,
+      "byte_size": 9169
+    },
+    {
+      "phase": "H",
+      "volume_id": "H09",
+      "title": "Volume H09 — Evaluation & Benchmarking Engine Architecture",
+      "path": "phase-h-ai-platform-enterprise/volume-h09-evaluation-benchmarking-engine-architecture.md",
+      "line_count": 765,
+      "word_count_estimate": 1137,
+      "byte_size": 8718
+    },
+    {
+      "phase": "H",
+      "volume_id": "H10",
+      "title": "Volume H10 — AI Observability Platform Architecture",
+      "path": "phase-h-ai-platform-enterprise/volume-h10-ai-observability-platform-architecture.md",
+      "line_count": 729,
+      "word_count_estimate": 1104,
+      "byte_size": 8135
+    },
+    {
+      "phase": "H",
+      "volume_id": "H11",
+      "title": "Volume H11 — Model Registry & MLOps Architecture",
+      "path": "phase-h-ai-platform-enterprise/volume-h11-model-registry-mlops-architecture.md",
+      "line_count": 798,
+      "word_count_estimate": 1111,
+      "byte_size": 8797
+    },
+    {
+      "phase": "H",
+      "volume_id": "H12",
+      "title": "Volume H12 — AI Cost Optimization Architecture",
+      "path": "phase-h-ai-platform-enterprise/volume-h12-ai-cost-optimization-architecture.md",
+      "line_count": 710,
+      "word_count_estimate": 1047,
+      "byte_size": 7742
+    },
+    {
+      "phase": "H",
+      "volume_id": "H13",
+      "title": "Volume H13 — Enterprise AI Governance Architecture",
+      "path": "phase-h-ai-platform-enterprise/volume-h13-enterprise-ai-governance-architecture.md",
+      "line_count": 763,
+      "word_count_estimate": 1121,
+      "byte_size": 8410
+    },
+    {
+      "phase": "H",
+      "volume_id": "H14",
+      "title": "Volume H14 — AI Security Architecture",
+      "path": "phase-h-ai-platform-enterprise/volume-h14-ai-security-architecture.md",
+      "line_count": 826,
+      "word_count_estimate": 1087,
+      "byte_size": 8150
+    },
+    {
+      "phase": "H",
+      "volume_id": "H15",
+      "title": "Volume H15 — Production AI Operations Architecture",
+      "path": "phase-h-ai-platform-enterprise/volume-h15-production-ai-operations-architecture.md",
+      "line_count": 772,
+      "word_count_estimate": 1159,
+      "byte_size": 8897
+    },
+    {
+      "phase": "I",
+      "volume_id": "I01",
+      "title": "Volume I01 — Product Operating Model Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i01-product-operating-model-architecture.md",
+      "line_count": 635,
+      "word_count_estimate": 927,
+      "byte_size": 7362
+    },
+    {
+      "phase": "I",
+      "volume_id": "I02",
+      "title": "Volume I02 — SaaS Multi-Tenant Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i02-saas-multi-tenant-architecture.md",
+      "line_count": 833,
+      "word_count_estimate": 1112,
+      "byte_size": 8641
+    },
+    {
+      "phase": "I",
+      "volume_id": "I03",
+      "title": "Volume I03 — Customer Lifecycle Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i03-customer-lifecycle-architecture.md",
+      "line_count": 732,
+      "word_count_estimate": 973,
+      "byte_size": 7591
+    },
+    {
+      "phase": "I",
+      "volume_id": "I04",
+      "title": "Volume I04 — Billing & Subscription Platform Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i04-billing-subscription-platform-architecture.md",
+      "line_count": 841,
+      "word_count_estimate": 1063,
+      "byte_size": 8073
+    },
+    {
+      "phase": "I",
+      "volume_id": "I05",
+      "title": "Volume I05 — Enterprise Integration Platform Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i05-enterprise-integration-platform-architecture.md",
+      "line_count": 741,
+      "word_count_estimate": 1265,
+      "byte_size": 9872
+    },
+    {
+      "phase": "I",
+      "volume_id": "I06",
+      "title": "Volume I06 — API Ecosystem Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i06-api-ecosystem-architecture.md",
+      "line_count": 609,
+      "word_count_estimate": 1046,
+      "byte_size": 7803
+    },
+    {
+      "phase": "I",
+      "volume_id": "I07",
+      "title": "Volume I07 — Marketplace Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i07-marketplace-architecture.md",
+      "line_count": 524,
+      "word_count_estimate": 987,
+      "byte_size": 7591
+    },
+    {
+      "phase": "I",
+      "volume_id": "I08",
+      "title": "Volume I08 — Partner Platform Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i08-partner-platform-architecture.md",
+      "line_count": 518,
+      "word_count_estimate": 891,
+      "byte_size": 6836
+    },
+    {
+      "phase": "I",
+      "volume_id": "I09",
+      "title": "Volume I09 — Revenue Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i09-revenue-architecture.md",
+      "line_count": 590,
+      "word_count_estimate": 947,
+      "byte_size": 6943
+    },
+    {
+      "phase": "I",
+      "volume_id": "I10",
+      "title": "Volume I10 — Growth Engine Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i10-growth-engine-architecture.md",
+      "line_count": 607,
+      "word_count_estimate": 1210,
+      "byte_size": 9334
+    },
+    {
+      "phase": "I",
+      "volume_id": "I11",
+      "title": "Volume I11 — Event Store, Data Contracts & Canonical Event Model Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i11-event-store-data-contracts-canonical-event-model-architecture.md",
+      "line_count": 399,
+      "word_count_estimate": 811,
+      "byte_size": 6502
+    },
+    {
+      "phase": "I",
+      "volume_id": "I12",
+      "title": "Volume I12 — Analytics, BI & Decision Intelligence Platform Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i12-analytics-bi-decision-intelligence-platform-architecture.md",
+      "line_count": 346,
+      "word_count_estimate": 635,
+      "byte_size": 4955
+    },
+    {
+      "phase": "I",
+      "volume_id": "I13",
+      "title": "Volume I13 — Lakehouse, Warehouse & Data Product Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i13-lakehouse-warehouse-data-product-architecture.md",
+      "line_count": 316,
+      "word_count_estimate": 567,
+      "byte_size": 4437
+    },
+    {
+      "phase": "I",
+      "volume_id": "I14",
+      "title": "Volume I14 — Feature Store & ML Data Platform Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i14-feature-store-ml-data-platform-architecture.md",
+      "line_count": 305,
+      "word_count_estimate": 561,
+      "byte_size": 4420
+    },
+    {
+      "phase": "I",
+      "volume_id": "I15",
+      "title": "Volume I15 — Vector Database, Embeddings & Semantic Retrieval Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i15-vector-database-embeddings-semantic-retrieval-architecture.md",
+      "line_count": 319,
+      "word_count_estimate": 545,
+      "byte_size": 4412
+    },
+    {
+      "phase": "I",
+      "volume_id": "I16",
+      "title": "Volume I16 — Knowledge Graph & Semantic Layer Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i16-knowledge-graph-semantic-layer-architecture.md",
+      "line_count": 297,
+      "word_count_estimate": 522,
+      "byte_size": 4141
+    },
+    {
+      "phase": "I",
+      "volume_id": "I17",
+      "title": "Volume I17 — Data Governance, Privacy & Quality Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i17-data-governance-privacy-quality-architecture.md",
+      "line_count": 263,
+      "word_count_estimate": 462,
+      "byte_size": 3723
+    },
+    {
+      "phase": "I",
+      "volume_id": "I18",
+      "title": "Volume I18 — Audit, Lineage & Compliance Data Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i18-audit-lineage-compliance-data-architecture.md",
+      "line_count": 278,
+      "word_count_estimate": 441,
+      "byte_size": 3524
+    },
+    {
+      "phase": "I",
+      "volume_id": "I19",
+      "title": "Volume I19 — KPI, Reporting & Executive Intelligence Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i19-kpi-reporting-executive-intelligence-architecture.md",
+      "line_count": 245,
+      "word_count_estimate": 439,
+      "byte_size": 3418
+    },
+    {
+      "phase": "I",
+      "volume_id": "I20",
+      "title": "Volume I20 — Real-Time Data Streaming & Operational Intelligence Architecture",
+      "path": "phase-i-product-business-data-platform/volume-i20-real-time-data-streaming-operational-intelligence-architecture.md",
+      "line_count": 348,
+      "word_count_estimate": 759,
+      "byte_size": 5619
+    },
+    {
+      "phase": "J",
+      "volume_id": "J01",
+      "title": "Volume J01 — Identity & Access Management Architecture",
+      "path": "phase-j-enterprise-platform-services/volume-j01-identity-access-management-architecture.md",
+      "line_count": 281,
+      "word_count_estimate": 483,
+      "byte_size": 3889
+    },
+    {
+      "phase": "J",
+      "volume_id": "J02",
+      "title": "Volume J02 — RBAC, ABAC & Policy Enforcement Architecture",
+      "path": "phase-j-enterprise-platform-services/volume-j02-rbac-abac-policy-enforcement-architecture.md",
+      "line_count": 248,
+      "word_count_estimate": 408,
+      "byte_size": 3429
+    },
+    {
+      "phase": "J",
+      "volume_id": "J03",
+      "title": "Volume J03 — Organization, Tenant & Workspace Control Plane Architecture",
+      "path": "phase-j-enterprise-platform-services/volume-j03-organization-tenant-workspace-control-plane-architecture.md",
+      "line_count": 232,
+      "word_count_estimate": 388,
+      "byte_size": 3197
+    },
+    {
+      "phase": "J",
+      "volume_id": "J04",
+      "title": "Volume J04 — Subscription, Entitlement & Plan Enforcement Architecture",
+      "path": "phase-j-enterprise-platform-services/volume-j04-subscription-entitlement-plan-enforcement-architecture.md",
+      "line_count": 206,
+      "word_count_estimate": 363,
+      "byte_size": 2926
+    },
+    {
+      "phase": "J",
+      "volume_id": "J05",
+      "title": "Volume J05 — Plugin & Extension Runtime Architecture",
+      "path": "phase-j-enterprise-platform-services/volume-j05-plugin-extension-runtime-architecture.md",
+      "line_count": 217,
+      "word_count_estimate": 374,
+      "byte_size": 3060
+    },
+    {
+      "phase": "J",
+      "volume_id": "J06",
+      "title": "Volume J06 — Marketplace Runtime & Installation Governance Architecture",
+      "path": "phase-j-enterprise-platform-services/volume-j06-marketplace-runtime-installation-governance-architecture.md",
+      "line_count": 199,
+      "word_count_estimate": 341,
+      "byte_size": 3052
+    },
+    {
+      "phase": "J",
+      "volume_id": "J07",
+      "title": "Volume J07 — White Label, Branding & Tenant Experience Architecture",
+      "path": "phase-j-enterprise-platform-services/volume-j07-white-label-branding-tenant-experience-architecture.md",
+      "line_count": 216,
+      "word_count_estimate": 380,
+      "byte_size": 3195
+    },
+    {
+      "phase": "J",
+      "volume_id": "J08",
+      "title": "Volume J08 — Localization, Internationalization & Regionalization Architecture",
+      "path": "phase-j-enterprise-platform-services/volume-j08-localization-internationalization-regionalization-architecture.md",
+      "line_count": 217,
+      "word_count_estimate": 382,
+      "byte_size": 3135
+    },
+    {
+      "phase": "J",
+      "volume_id": "J09",
+      "title": "Volume J09 — Compliance, GDPR & Data Rights Architecture",
+      "path": "phase-j-enterprise-platform-services/volume-j09-compliance-gdpr-data-rights-architecture.md",
+      "line_count": 217,
+      "word_count_estimate": 369,
+      "byte_size": 2997
+    },
+    {
+      "phase": "J",
+      "volume_id": "J10",
+      "title": "Volume J10 — API Management, Developer Portal & Gateway Governance Architecture",
+      "path": "phase-j-enterprise-platform-services/volume-j10-api-management-developer-portal-gateway-governance-architecture.md",
+      "line_count": 201,
+      "word_count_estimate": 351,
+      "byte_size": 2757
+    },
+    {
+      "phase": "J",
+      "volume_id": "J11",
+      "title": "Volume J11 — Enterprise Integration Hub & Connector Operations Architecture",
+      "path": "phase-j-enterprise-platform-services/volume-j11-enterprise-integration-hub-connector-operations-architecture.md",
+      "line_count": 182,
+      "word_count_estimate": 303,
+      "byte_size": 2672
+    },
+    {
+      "phase": "J",
+      "volume_id": "J12",
+      "title": "Volume J12 — Notification, Communication & Messaging Platform Architecture",
+      "path": "phase-j-enterprise-platform-services/volume-j12-notification-communication-messaging-platform-architecture.md",
+      "line_count": 204,
+      "word_count_estimate": 327,
+      "byte_size": 2787
+    },
+    {
+      "phase": "J",
+      "volume_id": "J13",
+      "title": "Volume J13 — Admin Console, Audit Operations & Enterprise Governance Portal Architecture",
+      "path": "phase-j-enterprise-platform-services/volume-j13-admin-console-audit-operations-enterprise-governance-portal-architecture.md",
+      "line_count": 187,
+      "word_count_estimate": 334,
+      "byte_size": 2702
+    },
+    {
+      "phase": "J",
+      "volume_id": "J14",
+      "title": "Volume J14 — Configuration, Feature Flags & Remote Policy Management Architecture",
+      "path": "phase-j-enterprise-platform-services/volume-j14-configuration-feature-flags-remote-policy-management-architecture.md",
+      "line_count": 204,
+      "word_count_estimate": 348,
+      "byte_size": 2790
+    },
+    {
+      "phase": "J",
+      "volume_id": "J15",
+      "title": "Volume J15 — Platform Service Reliability, SLO & Enterprise SLA Architecture",
+      "path": "phase-j-enterprise-platform-services/volume-j15-platform-service-reliability-slo-enterprise-sla-architecture.md",
+      "line_count": 297,
+      "word_count_estimate": 696,
+      "byte_size": 5053
+    },
+    {
+      "phase": "K",
+      "volume_id": "K01",
+      "title": "Volume K01 — Developer Platform & DevSecOps Operating Model Architecture",
+      "path": "phase-k-dev-platform-devsecops/volume-k01-developer-platform-devsecops-operating-model-architecture.md",
+      "line_count": 247,
+      "word_count_estimate": 470,
+      "byte_size": 3771
+    },
+    {
+      "phase": "K",
+      "volume_id": "K02",
+      "title": "Volume K02 — CI/CD Pipeline Architecture",
+      "path": "phase-k-dev-platform-devsecops/volume-k02-ci-cd-pipeline-architecture.md",
+      "line_count": 235,
+      "word_count_estimate": 399,
+      "byte_size": 3284
+    },
+    {
+      "phase": "K",
+      "volume_id": "K03",
+      "title": "Volume K03 — GitOps, Environment Promotion & Configuration Drift Architecture",
+      "path": "phase-k-dev-platform-devsecops/volume-k03-gitops-environment-promotion-configuration-drift-architecture.md",
+      "line_count": 205,
+      "word_count_estimate": 385,
+      "byte_size": 3080
+    },
+    {
+      "phase": "K",
+      "volume_id": "K04",
+      "title": "Volume K04 — Containers, Docker & Software Supply Chain Security Architecture",
+      "path": "phase-k-dev-platform-devsecops/volume-k04-containers-docker-software-supply-chain-security-architecture.md",
+      "line_count": 218,
+      "word_count_estimate": 379,
+      "byte_size": 3089
+    },
+    {
+      "phase": "K",
+      "volume_id": "K05",
+      "title": "Volume K05 — Kubernetes Runtime & Service Platform Architecture",
+      "path": "phase-k-dev-platform-devsecops/volume-k05-kubernetes-runtime-service-platform-architecture.md",
+      "line_count": 208,
+      "word_count_estimate": 367,
+      "byte_size": 3048
+    },
+    {
+      "phase": "K",
+      "volume_id": "K06",
+      "title": "Volume K06 — Infrastructure as Code, Terraform & Cloud Foundation Architecture",
+      "path": "phase-k-dev-platform-devsecops/volume-k06-infrastructure-as-code-terraform-cloud-foundation-architecture.md",
+      "line_count": 203,
+      "word_count_estimate": 357,
+      "byte_size": 2858
+    },
+    {
+      "phase": "K",
+      "volume_id": "K07",
+      "title": "Volume K07 — Observability, Monitoring & SRE Architecture",
+      "path": "phase-k-dev-platform-devsecops/volume-k07-observability-monitoring-sre-architecture.md",
+      "line_count": 217,
+      "word_count_estimate": 373,
+      "byte_size": 2974
+    },
+    {
+      "phase": "K",
+      "volume_id": "K08",
+      "title": "Volume K08 — Disaster Recovery, Backup & Business Continuity Architecture",
+      "path": "phase-k-dev-platform-devsecops/volume-k08-disaster-recovery-backup-business-continuity-architecture.md",
+      "line_count": 204,
+      "word_count_estimate": 400,
+      "byte_size": 3051
+    },
+    {
+      "phase": "K",
+      "volume_id": "K09",
+      "title": "Volume K09 — Performance, Scalability & Capacity Engineering Architecture",
+      "path": "phase-k-dev-platform-devsecops/volume-k09-performance-scalability-capacity-engineering-architecture.md",
+      "line_count": 215,
+      "word_count_estimate": 431,
+      "byte_size": 3211
+    },
+    {
+      "phase": "K",
+      "volume_id": "K10",
+      "title": "Volume K10 — Release Management, Change Control & Production Readiness Architecture",
+      "path": "phase-k-dev-platform-devsecops/volume-k10-release-management-change-control-production-readiness-architecture.md",
+      "line_count": 288,
+      "word_count_estimate": 666,
+      "byte_size": 4961
+    },
+    {
+      "phase": "L",
+      "volume_id": "L01",
+      "title": "Volume L01 — ADR Lifecycle & Architecture Decision Records Governance Architecture",
+      "path": "phase-l-product-architecture-governance/volume-l01-adr-lifecycle-architecture-decision-records-governance-architecture.md",
+      "line_count": 246,
+      "word_count_estimate": 477,
+      "byte_size": 3805
+    },
+    {
+      "phase": "L",
+      "volume_id": "L02",
+      "title": "Volume L02 — RFC, Design Proposal & Collaborative Decision Process Architecture",
+      "path": "phase-l-product-architecture-governance/volume-l02-rfc-design-proposal-collaborative-decision-process-architecture.md",
+      "line_count": 230,
+      "word_count_estimate": 439,
+      "byte_size": 3391
+    },
+    {
+      "phase": "L",
+      "volume_id": "L03",
+      "title": "Volume L03 — Product Governance, Portfolio & Roadmap Operating Model Architecture",
+      "path": "phase-l-product-architecture-governance/volume-l03-product-governance-portfolio-roadmap-operating-model-architecture.md",
+      "line_count": 225,
+      "word_count_estimate": 393,
+      "byte_size": 3327
+    },
+    {
+      "phase": "L",
+      "volume_id": "L04",
+      "title": "Volume L04 — Product Metrics, OKR & Outcome Measurement Architecture",
+      "path": "phase-l-product-architecture-governance/volume-l04-product-metrics-okr-outcome-measurement-architecture.md",
+      "line_count": 225,
+      "word_count_estimate": 406,
+      "byte_size": 3185
+    },
+    {
+      "phase": "L",
+      "volume_id": "L05",
+      "title": "Volume L05 — Architecture Governance, Standards & Review Board Architecture",
+      "path": "phase-l-product-architecture-governance/volume-l05-architecture-governance-standards-review-board-architecture.md",
+      "line_count": 221,
+      "word_count_estimate": 390,
+      "byte_size": 3320
+    },
+    {
+      "phase": "L",
+      "volume_id": "L06",
+      "title": "Volume L06 — Technical Debt, Lifecycle & Deprecation Management Architecture",
+      "path": "phase-l-product-architecture-governance/volume-l06-technical-debt-lifecycle-deprecation-management-architecture.md",
+      "line_count": 222,
+      "word_count_estimate": 403,
+      "byte_size": 3142
+    },
+    {
+      "phase": "L",
+      "volume_id": "L07",
+      "title": "Volume L07 — Security Review, Threat Modeling & Risk Acceptance Architecture",
+      "path": "phase-l-product-architecture-governance/volume-l07-security-review-threat-modeling-risk-acceptance-architecture.md",
+      "line_count": 205,
+      "word_count_estimate": 390,
+      "byte_size": 3134
+    },
+    {
+      "phase": "L",
+      "volume_id": "L08",
+      "title": "Volume L08 — Design Review, UX Governance & Accessibility Architecture",
+      "path": "phase-l-product-architecture-governance/volume-l08-design-review-ux-governance-accessibility-architecture.md",
+      "line_count": 209,
+      "word_count_estimate": 389,
+      "byte_size": 3188
+    },
+    {
+      "phase": "L",
+      "volume_id": "L09",
+      "title": "Volume L09 — Audit Framework, Control Evidence & Enterprise Assurance Architecture",
+      "path": "phase-l-product-architecture-governance/volume-l09-audit-framework-control-evidence-enterprise-assurance-architecture.md",
+      "line_count": 217,
+      "word_count_estimate": 396,
+      "byte_size": 3118
+    },
+    {
+      "phase": "L",
+      "volume_id": "L10",
+      "title": "Volume L10 — Release Gates, Enterprise Readiness & Operating Review Architecture",
+      "path": "phase-l-product-architecture-governance/volume-l10-release-gates-enterprise-readiness-operating-review-architecture.md",
+      "line_count": 309,
+      "word_count_estimate": 701,
+      "byte_size": 5242
+    }
+  ]
+}

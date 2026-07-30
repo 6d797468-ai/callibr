@@ -1,0 +1,12 @@
+{
+  "generated_on": "2026-07-27",
+  "source": "Architecture & Engineering Book (AEB).md",
+  "root": "AEB-Volumes",
+  "counts": {
+    "volumes": 124,
+    "adr_files": 287,
+    "index_files": 8,
+    "normalization_files": 1,
+    "rag_documents": 411
+  }
+}
