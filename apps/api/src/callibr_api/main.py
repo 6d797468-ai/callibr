@@ -368,6 +368,153 @@ def create_app() -> FastAPI:
     ) -> ReadinessResult:
         return readiness.compute()
 
+    class SystemCheckItem(BaseModel):
+        name: str
+        status: str  # "passed" | "warning" | "failed"
+        label: str
+        detail: str
+        timing_ms: int = 0
+
+    class SystemCheckResult(BaseModel):
+        score: int
+        ready: bool
+        warnings: int
+        checks: list[SystemCheckItem]
+
+    @app.get("/api/v1/pilot/system-check", response_model=SystemCheckResult, tags=["pilot"])
+    def pilot_system_check() -> SystemCheckResult:
+        import os
+        import time
+        from openai import OpenAI
+
+        def _check_llm_latency(api_key: str, base_url: str | None = None) -> int:
+            try:
+                client = OpenAI(api_key=api_key, base_url=base_url)
+                t0 = time.perf_counter()
+                client.models.list(timeout=5)
+                return int((time.perf_counter() - t0) * 1000)
+            except Exception:
+                return -1
+
+        checks: list[SystemCheckItem] = []
+        warning_count = 0
+        total_weight = 0
+        passed_weight = 0
+
+        # ── API ──────────────────────────────────────────────────────
+        t0 = time.perf_counter()
+        s = get_settings()
+        api_ms = int((time.perf_counter() - t0) * 1000)
+        checks.append(SystemCheckItem(
+            name="api", status="passed",
+            label="API Callibr",
+            detail="API accessible",
+            timing_ms=api_ms,
+        ))
+        total_weight += 25
+        passed_weight += 25
+
+        # ── LLM ──────────────────────────────────────────────────────
+        has_openai = bool(s.openai_api_key)
+        has_openrouter = bool(os.environ.get("OPENROUTER_API_KEY"))
+
+        if has_openai:
+            latency = _check_llm_latency(s.openai_api_key)  # type: ignore[arg-type]
+            detail = f"OpenAI — {'⚠' if latency < 0 else f'{latency} ms'}"
+            status = "passed" if latency > 0 else "warning"
+            checks.append(SystemCheckItem(
+                name="llm", status=status,
+                label="Moteur IA (LLM)",
+                detail=detail,
+                timing_ms=latency if latency > 0 else 0,
+            ))
+        elif has_openrouter:
+            latency = _check_llm_latency(
+                os.environ["OPENROUTER_API_KEY"],
+                base_url="https://openrouter.ai/api/v1",
+            )
+            detail = f"OpenRouter — {'⚠' if latency < 0 else f'{latency} ms'}"
+            status = "passed" if latency > 0 else "warning"
+            checks.append(SystemCheckItem(
+                name="llm", status=status,
+                label="Moteur IA (LLM)",
+                detail=detail,
+                timing_ms=latency if latency > 0 else 0,
+            ))
+        else:
+            checks.append(SystemCheckItem(
+                name="llm", status="warning",
+                label="Moteur IA (LLM)",
+                detail="Aucune clé API — réponses simulées",
+                timing_ms=0,
+            ))
+            warning_count += 1
+        total_weight += 25
+        if checks[-1].status == "passed":
+            passed_weight += 25
+
+        # ── STT ──────────────────────────────────────────────────────
+        if s.mock_stt:
+            checks.append(SystemCheckItem(
+                name="stt", status="passed",
+                label="Reconnaissance vocale (STT)",
+                detail="Mode simulation",
+                timing_ms=0,
+            ))
+        elif os.environ.get("DEEPGRAM_API_KEY"):
+            checks.append(SystemCheckItem(
+                name="stt", status="passed",
+                label="Reconnaissance vocale (STT)",
+                detail="Deepgram — clé présente",
+                timing_ms=0,
+            ))
+        else:
+            checks.append(SystemCheckItem(
+                name="stt", status="warning",
+                label="Reconnaissance vocale (STT)",
+                detail="Clé manquante — saisie texte",
+                timing_ms=0,
+            ))
+            warning_count += 1
+        total_weight += 25
+        if checks[-1].status == "passed":
+            passed_weight += 25
+
+        # ── TTS ──────────────────────────────────────────────────────
+        if s.mock_tts:
+            checks.append(SystemCheckItem(
+                name="tts", status="passed",
+                label="Synthèse vocale (TTS)",
+                detail="Mode simulation",
+                timing_ms=0,
+            ))
+        elif os.environ.get("ELEVENLABS_API_KEY"):
+            checks.append(SystemCheckItem(
+                name="tts", status="passed",
+                label="Synthèse vocale (TTS)",
+                detail="ElevenLabs — clé présente",
+                timing_ms=0,
+            ))
+        else:
+            checks.append(SystemCheckItem(
+                name="tts", status="warning",
+                label="Synthèse vocale (TTS)",
+                detail="Clé manquante — texte affiché",
+                timing_ms=0,
+            ))
+            warning_count += 1
+        total_weight += 25
+        if checks[-1].status == "passed":
+            passed_weight += 25
+
+        score = int((passed_weight / total_weight) * 100) if total_weight else 0
+        return SystemCheckResult(
+            score=score,
+            ready=warning_count == 0,
+            warnings=warning_count,
+            checks=checks,
+        )
+
     @app.get("/api/v1/pilot/report/export", tags=["pilot"])
     def pilot_export_pdf(
         dashboard: DashboardServiceDep,

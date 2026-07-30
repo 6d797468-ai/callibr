@@ -18,4 +18,10 @@ build/
 =*
 .callibr/
 models_gguf/
+img/avatar/
+img/temp/
+*.tmp
+*.swp
+*.swo
+*~
 

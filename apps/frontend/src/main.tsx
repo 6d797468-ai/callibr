@@ -9,6 +9,7 @@ import ReportPage from "./pages/ReportPage";
 import ReplayPage from "./pages/ReplayPage";
 import FeedbackPage from "./pages/FeedbackPage";
 import PilotDashboardPage from "./pages/PilotDashboardPage";
+import FirstRunWizard from "./components/FirstRunWizard";
 import type { ScenarioSummary } from "./lib/types";
 import * as api from "./lib/api";
 import { trackApplicationOpened } from "./lib/analytics";
@@ -43,6 +44,16 @@ function App() {
           setToken(t);
           setUser(u);
         }}
+      />
+    );
+  }
+
+  const firstRunDone = localStorage.getItem("callibr_first_run") === "done";
+  if (!firstRunDone) {
+    return (
+      <FirstRunWizard
+        token={token}
+        scenarios={scenarios}
       />
     );
   }

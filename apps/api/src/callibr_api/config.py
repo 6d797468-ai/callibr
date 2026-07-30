@@ -62,6 +62,7 @@ class ConfigValidator:
 
     Checks required variables are set, detects placeholder/default values,
     and ensures provider consistency (e.g. mock vs. real voice keys).
+    In local/demo mode, missing secrets are auto-generated.
     """
 
     _DEFAULT_CREDENTIALS = {
@@ -72,25 +73,32 @@ class ConfigValidator:
     }
 
     def validate(self, settings: Settings | None = None) -> list[ConfigError]:
+        import base64
+        import os
+
         errors: list[ConfigError] = []
         if settings is None:
             settings = get_settings()
 
-        # ── auth_secret must not be default or leaked ────────────
+        # ── auth_secret: auto-generate in local mode ──────────
         if settings.auth_secret in self._DEFAULT_CREDENTIALS.get("CALLIBR_AUTH_SECRET", []):
-            errors.append(
-                MissingVariableError(
-                    "CALLIBR_AUTH_SECRET utilise une valeur par défaut ou compromise. "
-                    "Génère-en une nouvelle avec : openssl rand -base64 32",
-                    variable="CALLIBR_AUTH_SECRET",
+            if settings.env == "local":
+                new_secret = base64.b64encode(os.urandom(32)).decode()
+                settings.auth_secret = new_secret
+                log.info("CALLIBR_AUTH_SECRET auto-généré pour l'environnement local")
+            else:
+                errors.append(
+                    MissingVariableError(
+                        "CALLIBR_AUTH_SECRET utilise une valeur par défaut ou compromise. "
+                        "Génère-en une nouvelle avec : openssl rand -base64 32",
+                        variable="CALLIBR_AUTH_SECRET",
+                    )
                 )
-            )
 
         # ── At least one LLM provider must be configured ────────
         llm_providers = [
             ("CALLIBR_OPENAI_API_KEY", settings.openai_api_key),
         ]
-        # Also check os.environ for non-CALLIBR_ prefixed vars
         for env_var in ("OPENROUTER_API_KEY",):
             val = os.environ.get(env_var)
             if val:
@@ -106,8 +114,7 @@ class ConfigValidator:
             )
 
         # ── Voice: if mock is disabled, real API keys are required ──
-        mock_stt = settings.mock_stt
-        if not mock_stt and not os.environ.get("DEEPGRAM_API_KEY"):
+        if not settings.mock_stt and not os.environ.get("DEEPGRAM_API_KEY"):
             errors.append(
                 MissingVariableError(
                     "CALLIBR_MOCK_STT=false mais DEEPGRAM_API_KEY n'est pas défini.",
@@ -115,8 +122,7 @@ class ConfigValidator:
                 )
             )
 
-        mock_tts = settings.mock_tts
-        if not mock_tts and not os.environ.get("ELEVENLABS_API_KEY"):
+        if not settings.mock_tts and not os.environ.get("ELEVENLABS_API_KEY"):
             errors.append(
                 MissingVariableError(
                     "CALLIBR_MOCK_TTS=false mais ELEVENLABS_API_KEY n'est pas défini.",

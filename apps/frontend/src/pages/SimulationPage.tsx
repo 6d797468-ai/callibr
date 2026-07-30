@@ -21,38 +21,49 @@ function ProcedureTimeline({
 }: {
   session: SimulationSession | null;
 }) {
-  const steps = [
-    { id: "opening", label: "Ouverture" },
-    { id: "resolution", label: "Résolution" },
-    { id: "closing", label: "Clôture" },
-    { id: "report", label: "Rapport" },
+  const stages = [
+    { id: "opening", label: "Ouverture", pct: 25 },
+    { id: "resolution", label: "Résolution", pct: 50 },
+    { id: "closing", label: "Clôture", pct: 25 },
   ];
 
-  const currentIndex = session
-    ? steps.findIndex((s) => s.id === session.current_step)
-    : -1;
+  const currentStage = session?.current_step ?? "";
+  const isCompleted = session?.status === "completed";
+  const currentIdx = stages.findIndex((s) => s.id === currentStage);
+  const activeIdx = currentIdx >= 0 ? currentIdx : (isCompleted ? stages.length - 1 : 0);
+  const progressPct = isCompleted ? 100 : ((activeIdx) / stages.length) * 100;
 
   return (
     <div className="procedure-timeline">
       <h3 className="section-title-sm">Procédure</h3>
-      <div className="timeline-steps">
-        {steps.map((step, i) => {
-          const isComplete = i < currentIndex;
-          const isActive = i === currentIndex;
-          const isPending = i > currentIndex;
-          return (
-            <div
-              className={`timeline-step ${isComplete ? "complete" : ""} ${isActive ? "active" : ""} ${isPending ? "pending" : ""}`}
-              key={step.id}
-            >
-              <span className="timeline-marker">
-                {isComplete ? "✓" : i + 1}
-              </span>
-              <span className="timeline-label">{step.label}</span>
-            </div>
-          );
-        })}
+      <div className="guided-progress">
+        <div className="guided-track">
+          <div className="guided-fill" style={{ width: `${progressPct}%` }} />
+        </div>
+        <div className="guided-labels">
+          {stages.map((s, i) => {
+            const state = isCompleted
+              ? "done"
+              : i < activeIdx ? "done" : i === activeIdx ? "active" : "pending";
+            return (
+              <div key={s.id} className={`guided-stage ${state}`}>
+                <span className="guided-marker">
+                  {state === "done" ? "✓" : i + 1}
+                </span>
+                <div className="guided-bar-wrap">
+                  <div className={`guided-bar ${state}`} />
+                </div>
+                <span className="guided-stage-label">{s.label}</span>
+              </div>
+            );
+          })}
+        </div>
       </div>
+      {currentStage && !isCompleted && (
+        <p className="guided-hint">
+          Étape en cours : <strong>{stages.find(s => s.id === currentStage)?.label ?? currentStage}</strong>
+        </p>
+      )}
     </div>
   );
 }
@@ -111,6 +122,55 @@ function LiveScore({
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+function LiveCoaching({
+  evaluation,
+}: {
+  evaluation: SimulationEvaluation | null;
+}) {
+  if (!evaluation) return null;
+  const { strengths, risks, next_best_actions, criteria } = evaluation;
+  const hasCoaching = strengths.length > 0 || risks.length > 0 || next_best_actions.length > 0;
+  if (!hasCoaching) return null;
+
+  return (
+    <div className="live-coaching">
+      <h3 className="section-title-sm">Coaching en direct</h3>
+      <div className="coaching-feed">
+        {strengths.map((s, i) => (
+          <div key={`str-${i}`} className="coach-item coach-positive">
+            <span className="coach-icon">✓</span>
+            <span className="coach-text">{s}</span>
+          </div>
+        ))}
+        {risks.map((r, i) => (
+          <div key={`risk-${i}`} className="coach-item coach-warn">
+            <span className="coach-icon">⚠</span>
+            <span className="coach-text">{r}</span>
+          </div>
+        ))}
+        {next_best_actions.map((a, i) => (
+          <div key={`action-${i}`} className="coach-item coach-tip">
+            <span className="coach-icon">→</span>
+            <span className="coach-text">{a}</span>
+          </div>
+        ))}
+      </div>
+
+      {criteria.length > 0 && (
+        <div className="coaching-criteria">
+          {criteria.map((c) => (
+            <div key={c.criterion_id} className={`coach-criterion ${c.status}`}>
+              <span className="coach-cr-dot" />
+              <span className="coach-cr-label">{c.label}</span>
+              <span className="coach-cr-score">{c.score}/{c.max_score}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -403,6 +463,7 @@ export default function SimulationPage({ token }: Props) {
       <div className="sim-layout">
         <aside className="sim-sidebar">
           <ProcedureTimeline session={session} />
+          <LiveCoaching evaluation={session?.evaluation ?? null} />
           <LiveScore evaluation={session?.evaluation ?? null} />
         </aside>
 

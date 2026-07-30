@@ -38,14 +38,14 @@ check_http() {
 check_docker() {
     local service="$1"
     if docker ps --format '{{.Names}}' 2>/dev/null | grep -q "$service"; then
-        log_ok "Docker container '$service' running"
+        log_ok "Conteneur '$service' en cours d'exécution"
     else
         local status
         status=$(docker ps -a --format '{{.Names}} {{.State}}' 2>/dev/null | grep "$service" || true)
         if [ -n "$status" ]; then
-            log_warn "Docker container '$service' existe mais: $status"
+            log_warn "Conteneur '$service' existe mais : $status"
         else
-            log_error "Docker container '$service' introuvable"
+            log_error "Conteneur '$service' introuvable"
         fi
         FAILED=1
     fi
@@ -58,23 +58,24 @@ echo -e "${CYAN}╚════════════════════�
 echo ""
 
 # ── Docker ─────────────────────────────────────────────────
-if ! docker info &>/dev/null; then
-    log_warn "Docker n'est pas disponible — verification reduite"
-else
+if docker info &>/dev/null; then
     log_info "Conteneurs Docker :"
     check_docker "callibr-api"
     check_docker "callibr-frontend"
     check_docker "postgres"
     check_docker "redis"
+else
+    log_warn "Docker non disponible — vérification réduite"
 fi
 
 echo ""
 
 # ── API HTTP ───────────────────────────────────────────────
-log_info "Points d'acces HTTP :"
+log_info "Points d'accès HTTP :"
 check_http "Health endpoint" "http://localhost:8000/health" 200
-check_http "API Info" "http://localhost:8000/api/v1/platform/info" 200
-check_http "Metrics" "http://localhost:8000/metrics" 200
+check_http "Platform info" "http://localhost:8000/api/v1/platform/info" 200
+check_http "Documentation OpenAPI" "http://localhost:8000/openapi.json" 200
+check_http "Metrics Prometheus" "http://localhost:8000/metrics" 200
 
 echo ""
 
@@ -85,10 +86,10 @@ echo ""
 
 # ── Résultat ───────────────────────────────────────────────
 if [ "$FAILED" -eq 0 ]; then
-    echo -e "${GREEN}Tous les services Callibr sont operationnels.${NC}"
+    echo -e "${GREEN}Tous les services Callibr sont opérationnels.${NC}"
     exit 0
 else
-    echo -e "${RED}Des services Callibr rencontrent des problemes.${NC}"
+    echo -e "${RED}Des services Callibr rencontrent des problèmes.${NC}"
     echo ""
     echo "Diagnostic :"
     echo "  docker ps -a"
