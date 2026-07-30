@@ -1,0 +1,203 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.13"
+  NODE_VERSION: "22"
+  CALLIBR_PERSISTENCE_BACKEND: "memory"
+  CALLIBR_ENV: "ci"
+  CALLIBR_AUTH_SECRET: "ci-secret-not-for-production-do-not-use"
+  CALLIBR_MOCK_STT: "true"
+  CALLIBR_MOCK_TTS: "true"
+
+jobs:
+
+  # ──────────────────────────────────────────────────────────
+  # 1. Backend Quality
+  # ──────────────────────────────────────────────────────────
+  backend-quality:
+    name: Backend Quality
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install monorepo
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e . 2>&1 | tail -5
+
+      - name: Lint (Ruff)
+        run: ruff check apps packages platform engines tests
+
+      - name: Unit and API tests
+        run: python -m pytest -x -q --tb=short
+
+      - name: Release Gate (CI mode)
+        run: python -m engineering gate
+        continue-on-error: true
+
+  # ──────────────────────────────────────────────────────────
+  # 2. Frontend Build
+  # ──────────────────────────────────────────────────────────
+  frontend-build:
+    name: Frontend Build
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: apps/frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: apps/frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+  # ──────────────────────────────────────────────────────────
+  # 3. Security Scan
+  # ──────────────────────────────────────────────────────────
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install monorepo
+        run: |
+          pip install -e . 2>&1 | tail -3
+
+      - name: Secret scanner
+        run: python -m engineering check secret_scan
+
+      - name: Ensure no .env is tracked
+        run: |
+          if git ls-files | grep -q '^\.env$'; then
+            echo "ERROR: .env is tracked by Git — secrets could leak"
+            exit 1
+          fi
+          echo ".env is properly ignored"
+
+      - name: Check for sensitive files
+        run: |
+          FOUND=""
+          for pattern in "*.pem" "*.key" "id_rsa" "credentials.json" "service-account.json"; do
+            for file in $(find . -name "$pattern" -not -path './.git/*' -not -path './node_modules/*' -not -path './.venv/*' 2>/dev/null); do
+              echo "WARNING: sensitive file found: $file"
+              FOUND="yes"
+            done
+          done
+          if [ -n "$FOUND" ]; then
+            exit 1
+          fi
+          echo "No sensitive files detected"
+
+  # ──────────────────────────────────────────────────────────
+  # 4. Shell Validation
+  # ──────────────────────────────────────────────────────────
+  shell-validation:
+    name: Shell Validation
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate shell scripts
+        run: |
+          FAILED=0
+          for script in \
+            install.sh \
+            update.sh \
+            start.sh \
+            stop.sh \
+            dev.sh \
+            healthcheck.sh \
+            scripts/activate_env.sh \
+            scripts/scan-secrets.sh; do
+            if [ -f "$script" ]; then
+              if bash -n "$script" 2>/dev/null; then
+                echo "  OK: $script"
+              else
+                echo "  FAIL: $script"
+                FAILED=1
+              fi
+            else
+              echo "  SKIP: $script (not found)"
+            fi
+          done
+          if [ "$FAILED" -ne 0 ]; then
+            exit 1
+          fi
+
+  # ──────────────────────────────────────────────────────────
+  # 5. PostgreSQL Integration
+  # ──────────────────────────────────────────────────────────
+  postgres-integration:
+    name: PostgreSQL Integration
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: callibr
+          POSTGRES_PASSWORD: callibr
+          POSTGRES_DB: callibr
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready -U callibr -d callibr
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install monorepo
+        run: |
+          pip install -e . 2>&1 | tail -3
+          pip install alembic psycopg[binary] 2>&1 | tail -3
+
+      - name: Alembic upgrade
+        run: alembic -c infrastructure/postgres/alembic.ini upgrade head
+        env:
+          CALLIBR_DATABASE_URL: postgresql+psycopg://callibr:callibr@localhost:5432/callibr
+
+      - name: Integration tests
+        run: python -m pytest tests/integration/ -x -q --tb=short
+        env:
+          CALLIBR_DATABASE_URL: postgresql+psycopg://callibr:callibr@localhost:5432/callibr
+
+      - name: Alembic downgrade
+        run: alembic -c infrastructure/postgres/alembic.ini downgrade -1
+        env:
+          CALLIBR_DATABASE_URL: postgresql+psycopg://callibr:callibr@localhost:5432/callibr
