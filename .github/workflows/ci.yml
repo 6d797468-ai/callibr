@@ -16,6 +16,7 @@ env:
   CALLIBR_PERSISTENCE_BACKEND: "memory"
   CALLIBR_ENV: "ci"
   CALLIBR_AUTH_SECRET: "ci-secret-not-for-production-do-not-use"
+  CALLIBR_OPENAI_API_KEY: "ci-dummy-key-not-used-in-tests"
   CALLIBR_MOCK_STT: "true"
   CALLIBR_MOCK_TTS: "true"
 

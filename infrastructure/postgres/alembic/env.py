@@ -11,7 +11,10 @@ target_metadata = None
 
 
 def get_url() -> str:
-    return os.environ.get("CALLIBR_DATABASE_URL", config.get_main_option("sqlalchemy.url", ""))
+    url = os.environ.get("CALLIBR_DATABASE_URL", config.get_main_option("sqlalchemy.url", ""))
+    if url.startswith("postgresql://") or url.startswith("postgres://"):
+        url = "postgresql+psycopg://" + url.split("://", 1)[1]
+    return url
 
 
 def run_migrations_offline() -> None:
