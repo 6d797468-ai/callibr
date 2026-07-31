@@ -51,3 +51,4 @@ AEB (architecture cible)
 | CAP-15 | [Multi-Tenant](MULTI-TENANT.md) | C03 | En cours |
 | CAP-16 | [Observability](OBSERVABILITY.md) | K07, H10 | Baseline |
 | CAP-17 | [Domain Packs](DOMAIN-PACKS.md) | G00-G20 | Seed Support/SAV |
+| CAP-18 | [Voice](VOICE.md) | B10, I11-I20 | Voice Runtime v1 + VibeVoice local |

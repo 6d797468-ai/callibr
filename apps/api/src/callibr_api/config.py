@@ -39,6 +39,16 @@ class Settings(BaseSettings):
     mock_stt: bool = Field(default=True)
     mock_tts: bool = Field(default=True)
 
+    # Voice provider selection: "mock" | "deepgram" | "vibevoice" (STT),
+    # "mock" | "elevenlabs" | "vibevoice" (TTS).
+    voice_stt_provider: str = Field(default="mock")
+    voice_tts_provider: str = Field(default="mock")
+    vibevoice_tts_url: str = Field(default="ws://localhost:3000/stream")
+    vibevoice_asr_bin: str = Field(default="")
+    vibevoice_asr_vae_model: str = Field(default="")
+    vibevoice_asr_lm_model: str = Field(default="")
+    vibevoice_asr_threads: int = Field(default=4)
+
 
 def get_settings() -> Settings:
     return Settings()
@@ -128,6 +138,27 @@ class ConfigValidator:
                     variable="ELEVENLABS_API_KEY",
                 )
             )
+
+        # ── Voice: VibeVoice (local) provider requires engine paths ──
+        if settings.voice_stt_provider.lower() == "vibevoice":
+            missing_asr = [
+                (name, getattr(settings, name))
+                for name in (
+                    "vibevoice_asr_bin",
+                    "vibevoice_asr_vae_model",
+                    "vibevoice_asr_lm_model",
+                )
+                if not getattr(settings, name)
+            ]
+            if missing_asr:
+                vars_ = ", ".join(f"CALLIBR_{name.upper()}" for name, _ in missing_asr)
+                errors.append(
+                    MissingVariableError(
+                        "CALLIBR_VOICE_STT_PROVIDER=vibevoice nécessite "
+                        f"{vars_} (binaire asr_infer + modèles GGUF).",
+                        variable="vibevoice_asr_bin",
+                    )
+                )
 
         return errors
 

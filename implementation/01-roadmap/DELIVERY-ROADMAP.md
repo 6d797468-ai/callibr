@@ -158,6 +158,19 @@ Objectif : comprendre precisement l'usage reel.
 
 Objectif : transformer le Voice Runtime en differenciateur commercial.
 
+- **VibeVoice local STT/TTS ✅** (2026-07-31) : parcours voix 100 % local, sans
+  cle API ni GPU. STT : VibeASR.cpp (`asr_infer`, inference CPU temps reel sur
+  3-4 threads, modeles BitNet quantifies ~1.58 Go — VAE I8_S + LM I2_S).
+  TTS : VibeVoice-Realtime-0.5B via son serveur WebSocket (streaming,
+  ~200-300 ms premier chunk, PCM16 24 kHz). Adapters
+  `VibeVoiceASRAdapter`/`VibeVoiceTTSAdapter` dans le moteur voice (Protocol
+  `STTAdapter`/`TTSAdapter` respecte, fallback Mock si non configure).
+  Configuration : `CALLIBR_VOICE_STT_PROVIDER` / `CALLIBR_VOICE_TTS_PROVIDER`
+  (mock | deepgram | elevenlabs | vibevoice), chemins engine
+  `CALLIBR_VIBEVOICE_ASR_*`, URL TTS `CALLIBR_VIBEVOICE_TTS_URL`.
+  Verification : 11 tests adapters (CLI stube + serveur WebSocket stube),
+  381 tests verts, ruff clean, E2E reelle locale (asr_infer compile, models
+  telecharges depuis HF, transcription de parole reelle OK).
 - mesure de latence STT/TTS ;
 - qualite audio ;
 - interruptions (barge-in) ;
