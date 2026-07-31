@@ -8,11 +8,14 @@ import type {
   SimulationFeedback,
   SimulationSession,
   AuditRecord,
+  ApiErrorPayload,
 } from "./types";
+import { ApiError } from "./types";
 
 const API_BASE_URL =
   import.meta.env.VITE_CALLIBR_API_BASE_URL ?? "http://localhost:8000";
 const DEMO_TRACE_ID = "trace_frontend_demo";
+const REQUEST_TIMEOUT_MS = 30_000;
 
 function apiHeaders(token: string | null): Record<string, string> {
   const h: Record<string, string> = {
@@ -33,15 +36,55 @@ export async function apiFetch<T>(
   token: string | null,
   init?: RequestInit,
 ): Promise<T> {
-  const res = await fetch(`${API_BASE_URL}${path}`, {
-    ...init,
-    headers: { ...apiHeaders(token), ...init?.headers },
-  });
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body.message ?? `HTTP ${res.status}`);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE_URL}${path}`, {
+      ...init,
+      signal: controller.signal,
+      headers: { ...apiHeaders(token), ...init?.headers },
+    });
+  } catch (err) {
+    const aborted = (err as Error)?.name === "AbortError";
+    throw new ApiError(
+      aborted ? "TIMEOUT" : "NETWORK_ERROR",
+      aborted ? "timeout" : "network",
+      aborted
+        ? "Le serveur met trop de temps à répondre."
+        : "Connexion impossible.",
+      {},
+      null,
+      err,
+    );
+  } finally {
+    clearTimeout(timeoutId);
   }
-  return res.json() as Promise<T>;
+
+  if (!res.ok) {
+    let payload: ApiErrorPayload = {};
+    try {
+      payload = (await res.json()) as ApiErrorPayload;
+    } catch {
+      payload = {};
+    }
+    throw ApiError.fromHttp(
+      res.status,
+      payload,
+      res.headers.get("X-Trace-Id") ?? undefined,
+    );
+  }
+
+  try {
+    return (await res.json()) as T;
+  } catch {
+    throw new ApiError(
+      "INVALID_RESPONSE",
+      "parse",
+      "Le serveur a répondu de façon inattendue.",
+    );
+  }
 }
 
 export function login(): Promise<AuthToken> {

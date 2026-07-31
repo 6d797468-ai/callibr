@@ -1,6 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../lib/api";
+import ErrorPanel from "../components/ErrorPanel";
+import { friendlyError, type UserFacingError } from "../lib/errors";
 
 type Props = {
   onLogin: (token: string, user: { display_name: string }) => void;
@@ -8,26 +10,37 @@ type Props = {
 
 export default function LoginPage({ onLogin }: Props) {
   const navigate = useNavigate();
-  const called = useRef(false);
+  const [error, setError] = useState<UserFacingError | null>(null);
+  const onLoginRef = useRef(onLogin);
+  onLoginRef.current = onLogin;
 
-  useEffect(() => {
-    if (called.current) return;
-    called.current = true;
+  const doLogin = useCallback(() => {
+    setError(null);
     login()
       .then((payload) => {
-        onLogin(payload.access_token, payload.user);
+        onLoginRef.current(payload.access_token, payload.user);
         navigate("/scenarios");
       })
-      .catch(() => {});
-  }, [onLogin, navigate]);
+      .catch((err) => setError(friendlyError(err)));
+  }, [navigate]);
+
+  useEffect(() => {
+    doLogin();
+  }, [doLogin]);
 
   return (
     <div className="login-page">
       <div className="login-card">
         <h1>Callibr</h1>
         <p className="login-subtitle">Simulation d'entretien client</p>
-        <div className="login-spinner" />
-        <p>Connexion en cours...</p>
+        {error ? (
+          <ErrorPanel error={error} onRetry={doLogin} />
+        ) : (
+          <>
+            <div className="login-spinner" />
+            <p>Connexion en cours...</p>
+          </>
+        )}
       </div>
     </div>
   );

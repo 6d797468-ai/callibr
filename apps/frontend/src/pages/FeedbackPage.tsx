@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as api from "../lib/api";
 import type { SimulationFeedback, TrainingIntent } from "../lib/types";
+import ErrorPanel from "../components/ErrorPanel";
+import { friendlyError, type UserFacingError } from "../lib/errors";
 
 type Props = {
   sessionId: string;
@@ -46,10 +48,12 @@ export default function FeedbackPage({ sessionId, token }: Props) {
   const [freeText, setFreeText] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
+  const [submitError, setSubmitError] = useState<UserFacingError | null>(null);
 
   async function handleSubmit() {
     if (sending || !trainingIntent) return;
     setSending(true);
+    setSubmitError(null);
     const feedback: SimulationFeedback = {
       session_id: sessionId,
       tenant_id: "tenant_demo",
@@ -65,8 +69,8 @@ export default function FeedbackPage({ sessionId, token }: Props) {
     try {
       await api.submitFeedback(feedback, token);
       setSubmitted(true);
-    } catch {
-      // keep form visible on error
+    } catch (err) {
+      setSubmitError(friendlyError(err));
     } finally {
       setSending(false);
     }
@@ -148,6 +152,10 @@ export default function FeedbackPage({ sessionId, token }: Props) {
             placeholder="Qu'avez-vous aimé ? Qu'aimeriez-vous améliorer ?"
           />
         </div>
+
+        {submitError && (
+          <ErrorPanel error={submitError} onRetry={handleSubmit} />
+        )}
 
         <button
           className="btn-primary"

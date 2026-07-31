@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import logging
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 from typing import Annotated
 
+import psycopg
 from callibr_contracts import (
     AuditRecord,
     AuthenticatedUser,
@@ -32,7 +34,8 @@ from callibr_telemetry.dashboard import DashboardService
 from callibr_telemetry.pilot import PilotDashboardService
 from callibr_telemetry.readiness import PilotReadinessService, ReadinessResult
 from callibr_telemetry.report import generate_pdf
-from fastapi import Depends, FastAPI, Query, Request, Response
+from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
@@ -67,6 +70,8 @@ IdentityProviderDep = Annotated[DemoIdentityProvider, Depends(get_identity_provi
 DashboardServiceDep = Annotated[DashboardService, Depends(get_dashboard_service)]
 PilotDashboardServiceDep = Annotated[PilotDashboardService, Depends(get_pilot_dashboard_service)]
 ReadinessServiceDep = Annotated[PilotReadinessService, Depends(get_readiness_service)]
+
+log = logging.getLogger(__name__)
 
 
 def _emit_product_event(
@@ -105,7 +110,34 @@ def _status_code_for(error: CallibrError) -> int:
         return 409
     if error.code == "HANDLER_ALREADY_REGISTERED":
         return 409
+    if error.code == "llm_error" or error.code.endswith("_UNAVAILABLE"):
+        return 503
     return 400
+
+
+def _error_payload(
+    *,
+    code: str,
+    message: str,
+    http_status: int,
+    trace_id: str,
+    details: dict | None = None,
+    title: str | None = None,
+    explanation: str | None = None,
+    action: str | None = None,
+    retryable: bool = False,
+) -> dict:
+    return {
+        "code": code,
+        "message": message,
+        "title": title,
+        "explanation": explanation,
+        "action": action,
+        "retryable": retryable,
+        "details": details or {},
+        "http_status": http_status,
+        "trace_id": trace_id,
+    }
 
 
 def create_app() -> FastAPI:
@@ -148,14 +180,82 @@ def create_app() -> FastAPI:
         return response
 
     @app.exception_handler(CallibrError)
-    async def callibr_error_handler(_: Request, exc: CallibrError) -> JSONResponse:
+    async def callibr_error_handler(request: Request, exc: CallibrError) -> JSONResponse:
         return JSONResponse(
             status_code=_status_code_for(exc),
-            content={
-                "code": exc.code,
-                "message": exc.message,
-                "details": exc.details,
-            },
+            content=_error_payload(
+                code=exc.code,
+                message=exc.message,
+                details=exc.details,
+                http_status=_status_code_for(exc),
+                trace_id=getattr(request.state, "trace_id", ""),
+                title=exc.title,
+                explanation=exc.explanation,
+                action=exc.action,
+                retryable=exc.retryable,
+            ),
+        )
+
+    @app.exception_handler(RequestValidationError)
+    async def validation_error_handler(
+        request: Request, exc: RequestValidationError
+    ) -> JSONResponse:
+        return JSONResponse(
+            status_code=422,
+            content=_error_payload(
+                code="VALIDATION_ERROR",
+                message="Les données envoyées sont invalides.",
+                details={"errors": exc.errors()},
+                http_status=422,
+                trace_id=getattr(request.state, "trace_id", ""),
+                title="Requête invalide",
+                explanation="Certains champs envoyés sont incorrects ou incomplets.",
+                action="Vérifiez les informations saisies puis réessayez.",
+                retryable=True,
+            ),
+        )
+
+    @app.exception_handler(HTTPException)
+    async def http_exception_handler(
+        request: Request, exc: HTTPException
+    ) -> JSONResponse:
+        return JSONResponse(
+            status_code=exc.status_code,
+            content=_error_payload(
+                code="HTTP_ERROR",
+                message=str(exc.detail),
+                details={"headers": dict(exc.headers) if exc.headers else None},
+                http_status=exc.status_code,
+                trace_id=getattr(request.state, "trace_id", ""),
+                title="Requête refusée",
+                explanation=str(exc.detail),
+                action="Merci de vérifier votre demande puis de réessayer.",
+                retryable=exc.status_code >= 500,
+            ),
+        )
+
+    @app.exception_handler(Exception)
+    async def unhandled_error_handler(request: Request, exc: Exception) -> JSONResponse:
+        log.exception("Unhandled error on %s: %s", request.url.path, exc)
+        datastore_down = isinstance(exc, (psycopg.OperationalError, psycopg.InterfaceError))
+        return JSONResponse(
+            status_code=503 if datastore_down else 500,
+            content=_error_payload(
+                code="DATASTORE_UNAVAILABLE" if datastore_down else "INTERNAL_ERROR",
+                message="Service de données inaccessible." if datastore_down else "Erreur inattendue.",
+                http_status=503 if datastore_down else 500,
+                trace_id=getattr(request.state, "trace_id", ""),
+                title="Service de données indisponible"
+                if datastore_down
+                else "Une erreur inattendue est survenue",
+                explanation="Les données sont momentanément inaccessibles. Réessayez dans quelques instants."
+                if datastore_down
+                else "L'opération n'a pas pu aboutir. Réessayez ; si le problème persiste, contactez l'administrateur.",
+                action="Réessayez dans quelques instants."
+                if datastore_down
+                else "Réessayez, puis contactez l'administrateur si le problème persiste.",
+                retryable=True,
+            ),
         )
 
     @app.get("/health", tags=["platform"])
@@ -554,7 +654,18 @@ def create_app() -> FastAPI:
     ) -> Response:
         data = dashboard.compute()
         readiness_result = readiness.compute()
-        pdf_bytes = generate_pdf(data, readiness_result)
+        try:
+            pdf_bytes = generate_pdf(data, readiness_result)
+        except Exception as exc:  # noqa: BLE001
+            log.exception("PDF export failed")
+            raise CallibrError(
+                "REPORT_UNAVAILABLE",
+                "Le rapport n'a pas pu être généré.",
+                title="Rapport indisponible",
+                explanation="La génération du rapport a échoué.",
+                action="Réessayez dans quelques instants.",
+                retryable=True,
+            ) from exc
         return Response(
             content=pdf_bytes,
             media_type="application/pdf",
