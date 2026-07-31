@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import pytest
 from callibr_planning import (
     CommunicationGoal,
     CommunicationIntent,
@@ -8,6 +7,7 @@ from callibr_planning import (
     ResponsePlan,
     ResponseTone,
     ResponseValidator,
+    ValidationResult,
     ValidationViolation,
     VoiceStyle,
 )
@@ -257,5 +257,4 @@ class TestMerge:
 
 
 def _make_result(valid: bool, score: float) -> ValidationResult:
-    from callibr_planning import ValidationResult
     return ValidationResult(valid=valid, score=score)

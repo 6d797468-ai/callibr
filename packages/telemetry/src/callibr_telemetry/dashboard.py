@@ -63,7 +63,6 @@ class DashboardService:
         completed = event_store.count_by_type().get("ConversationCompleted", 0)
         total_sessions = len(sessions)
         completed_sessions = [s for s in sessions if s.status == "completed"]
-        active_sessions = [s for s in sessions if s.status == "active"]
 
         durations = []
         learners = set()

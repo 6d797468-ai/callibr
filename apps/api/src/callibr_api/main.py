@@ -20,13 +20,12 @@ from callibr_contracts import (
     SimulationSession,
     StartSimulationRequest,
 )
-from pydantic import BaseModel
+from callibr_contracts.feedback import SimulationFeedback
 from callibr_identity import DemoIdentityProvider
 from callibr_kernel import CallibrError, TenantContext, new_trace_id
 from callibr_seed import load_demo_catalogue
 from callibr_simulation import SimulationService
 from callibr_telemetry import configure_logging
-from callibr_contracts.feedback import SimulationFeedback
 from callibr_telemetry.dashboard import DashboardData, DashboardService
 from callibr_telemetry.feedback import FeedbackRecord, get_feedback_store
 from callibr_telemetry.product import ProductEvent, emit_product_event, get_product_event_store
@@ -36,6 +35,7 @@ from fastapi import Depends, FastAPI, Query, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
+from pydantic import BaseModel
 
 from callibr_api.config import ConfigValidator, get_settings
 from callibr_api.dependencies import (
@@ -385,6 +385,7 @@ def create_app() -> FastAPI:
     def pilot_system_check() -> SystemCheckResult:
         import os
         import time
+
         from openai import OpenAI
 
         def _check_llm_latency(api_key: str, base_url: str | None = None) -> int:

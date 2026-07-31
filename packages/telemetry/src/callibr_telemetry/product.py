@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import logging
-import time
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 log = logging.getLogger(__name__)
 
@@ -27,7 +26,7 @@ PRODUCT_EVENT_TYPES = frozenset({
 class ProductEvent:
     event_type: str
     tenant_id: str
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     scenario_id: str = ""
     persona_id: str = ""
     procedure_id: str = ""

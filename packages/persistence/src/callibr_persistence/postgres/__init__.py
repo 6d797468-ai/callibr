@@ -1,3 +1,5 @@
+"""PostgreSQL persistence adapters for Callibr runtime state."""
+
 from __future__ import annotations
 
 

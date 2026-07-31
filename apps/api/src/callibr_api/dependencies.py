@@ -25,6 +25,7 @@ from callibr_persistence import (
     InMemoryConversationStore,
     InMemoryIdentityStore,
     InMemoryPersonaDefinitionStore,
+    InMemoryProcedureStore,
     InMemoryRuleStore,
     InMemoryScenarioDefinitionStore,
     InMemorySimulationSessionStore,
@@ -32,6 +33,10 @@ from callibr_persistence import (
     PostgresAuditEventStore,
     PostgresConversationStore,
     PostgresIdentityStore,
+    PostgresPersonaDefinitionStore,
+    PostgresProcedureStore,
+    PostgresRuleStore,
+    PostgresScenarioDefinitionStore,
     PostgresSimulationSessionStore,
     PostgresTransactionManager,
 )
@@ -93,8 +98,6 @@ def get_procedure_executor() -> ProcedureExecutor:
 
 @lru_cache
 def get_procedure_store() -> PostgresProcedureStore | InMemoryProcedureStore:
-    from callibr_persistence import InMemoryProcedureStore, PostgresProcedureStore
-
     settings = get_settings()
 
     if settings.persistence_backend.lower() == "postgres":
@@ -115,8 +118,6 @@ def get_procedure_service() -> ProcedureService:
 
 @lru_cache
 def get_scenario_service() -> ScenarioService:
-    from callibr_persistence import PostgresScenarioDefinitionStore
-
     settings = get_settings()
 
     scenario_registry = ScenarioDefRegistry()
@@ -125,10 +126,11 @@ def get_scenario_service() -> ScenarioService:
         procedure_store=get_procedure_store(),
     )
 
-    if settings.persistence_backend.lower() == "postgres":
-        store = PostgresScenarioDefinitionStore(settings.database_url)
-    else:
-        store = InMemoryScenarioDefinitionStore()
+    store = (
+        PostgresScenarioDefinitionStore(settings.database_url)
+        if settings.persistence_backend.lower() == "postgres"
+        else InMemoryScenarioDefinitionStore()
+    )
 
     return ScenarioService(
         registry=scenario_registry,
@@ -142,17 +144,16 @@ def get_scenario_service() -> ScenarioService:
 
 @lru_cache
 def get_persona_service() -> PersonaService:
-    from callibr_persistence import PostgresPersonaDefinitionStore
-
     settings = get_settings()
 
     registry = PersonaRegistry()
     validator = PersonaValidator()
 
-    if settings.persistence_backend.lower() == "postgres":
-        store = PostgresPersonaDefinitionStore(settings.database_url)
-    else:
-        store = InMemoryPersonaDefinitionStore()
+    store = (
+        PostgresPersonaDefinitionStore(settings.database_url)
+        if settings.persistence_backend.lower() == "postgres"
+        else InMemoryPersonaDefinitionStore()
+    )
 
     return PersonaService(
         registry=registry,
@@ -165,17 +166,16 @@ def get_persona_service() -> PersonaService:
 
 @lru_cache
 def get_rule_service() -> RuleService:
-    from callibr_persistence import PostgresRuleStore
-
     settings = get_settings()
 
     registry = RuleRegistry()
     validator = RuleValidator()
 
-    if settings.persistence_backend.lower() == "postgres":
-        store = PostgresRuleStore(settings.database_url)
-    else:
-        store = InMemoryRuleStore()
+    store = (
+        PostgresRuleStore(settings.database_url)
+        if settings.persistence_backend.lower() == "postgres"
+        else InMemoryRuleStore()
+    )
 
     return RuleService(
         registry=registry,
