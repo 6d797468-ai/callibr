@@ -7,6 +7,7 @@ from callibr_voice.models import (
 )
 from callibr_voice.providers import DeepgramSTTAdapter, ElevenLabsTTSAdapter
 from callibr_voice.service import VoiceSessionService
+from callibr_voice.vibevoice import VibeVoiceASRAdapter, VibeVoiceTTSAdapter
 
 __all__ = [
     "AudioChunk",
@@ -16,6 +17,8 @@ __all__ = [
     "MockTTSAdapter",
     "STTAdapter",
     "TTSAdapter",
+    "VibeVoiceASRAdapter",
+    "VibeVoiceTTSAdapter",
     "VoiceConfig",
     "VoiceSession",
     "VoiceSessionService",

@@ -18,6 +18,9 @@ build/
 =*
 .callibr/
 models_gguf/
+# External open-source voice engines (clones with their own git history)
+VibeASR.cpp/
+VibeVoice/
 img/avatar/
 img/temp/
 *.tmp

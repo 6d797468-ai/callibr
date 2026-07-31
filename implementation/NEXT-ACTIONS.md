@@ -59,6 +59,13 @@ satisfaction >= 4/5, temps jusqu'a la premiere simulation < 5 min.
 
 Priorite : P1
 
+- **VibeVoice local STT/TTS ✅ (2026-07-31)** — parcours voix 100 % local, sans
+  cle API ni GPU : STT via VibeASR.cpp (`asr_infer` CPU, modeles BitNet GGUF
+  ~1.6 Go), TTS via VibeVoice-Realtime-0.5B (serveur WebSocket streaming).
+  Selection par `CALLIBR_VOICE_STT_PROVIDER` / `CALLIBR_VOICE_TTS_PROVIDER`
+  (mock | deepgram | elevenlabs | vibevoice) avec fallback Mock. Adaptateurs
+  testes (11 tests) + verif E2E reelle locale (asr_infer compile, models
+  telecharges, transcription de parole reelle OK).
 - Voice latency (STT/TTS)
 - Streaming optimise
 - Barge-in (interruptions)

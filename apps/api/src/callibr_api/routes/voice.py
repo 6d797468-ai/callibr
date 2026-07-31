@@ -16,6 +16,8 @@ from callibr_voice import (
     MockTTSAdapter,
     STTAdapter,
     TTSAdapter,
+    VibeVoiceASRAdapter,
+    VibeVoiceTTSAdapter,
     VoiceSessionService,
     VoiceSessionState,
 )
@@ -38,6 +40,19 @@ VoiceServiceDep = Annotated[VoiceSessionService, Depends(get_voice_service)]
 @lru_cache
 def get_stt_adapter() -> STTAdapter:
     settings = get_settings()
+    provider = settings.voice_stt_provider.lower()
+    if provider == "vibevoice":
+        adapter = VibeVoiceASRAdapter(
+            bin_path=settings.vibevoice_asr_bin,
+            vae_model=settings.vibevoice_asr_vae_model,
+            lm_model=settings.vibevoice_asr_lm_model,
+            threads=settings.vibevoice_asr_threads,
+        )
+        if adapter.is_configured():
+            log.info("Voice: using VibeVoice (VibeASR.cpp) STT")
+            return adapter
+        log.warning("Voice: VibeVoice ASR not configured, falling back to Mock STT")
+        return MockSTTAdapter()
     if settings.mock_stt:
         log.info("Voice: using Mock STT")
         return MockSTTAdapter()
@@ -49,6 +64,10 @@ def get_stt_adapter() -> STTAdapter:
 @lru_cache
 def get_tts_adapter() -> TTSAdapter:
     settings = get_settings()
+    provider = settings.voice_tts_provider.lower()
+    if provider == "vibevoice":
+        log.info("Voice: using VibeVoice (Realtime) TTS at %s", settings.vibevoice_tts_url)
+        return VibeVoiceTTSAdapter(ws_url=settings.vibevoice_tts_url)
     if settings.mock_tts:
         log.info("Voice: using Mock TTS")
         return MockTTSAdapter()
