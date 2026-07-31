@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../lib/api";
+import ErrorPanel from "../components/ErrorPanel";
+import { friendlyError, type UserFacingError } from "../lib/errors";
 
 type FunnelStage = {
   id: string;
@@ -66,22 +68,25 @@ export default function PilotDashboardPage({ token }: Props) {
   const navigate = useNavigate();
   const bearer = token ?? sessionStorage.getItem("callibr_token");
   const [data, setData] = useState<PilotDashboard | null>(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<UserFacingError | null>(null);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     if (!bearer) { navigate("/"); return; }
+    setError(null);
     apiFetch<PilotDashboard>("/api/v1/pilot/dashboard", bearer)
       .then(setData)
-      .catch((err) => setError(err.message));
-  }, [bearer, navigate]);
+      .catch((err) => setError(friendlyError(err)));
+  }, [bearer, navigate, attempt]);
 
   if (error) {
     return (
       <div className="dashboard-page error">
-        <p>{error}</p>
-        <button className="btn-primary" onClick={() => navigate("/scenarios")} type="button">
-          Retour
-        </button>
+        <ErrorPanel
+          error={error}
+          onRetry={() => setAttempt((n) => n + 1)}
+          onBack={() => navigate("/scenarios")}
+        />
       </div>
     );
   }

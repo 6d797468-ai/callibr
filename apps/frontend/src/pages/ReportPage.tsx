@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import * as api from "../lib/api";
 import type { SessionReport } from "../lib/types";
+import ErrorPanel from "../components/ErrorPanel";
+import { friendlyError, type UserFacingError } from "../lib/errors";
 
 type Props = {
   token: string | null;
@@ -13,7 +15,8 @@ export default function ReportPage({ token }: Props) {
   const sessionId = params.get("session") ?? "";
   const bearer = token ?? sessionStorage.getItem("callibr_token");
   const [report, setReport] = useState<SessionReport | null>(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<UserFacingError | null>(null);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     if (!sessionId) {
@@ -24,19 +27,21 @@ export default function ReportPage({ token }: Props) {
       navigate("/");
       return;
     }
+    setError(null);
     api
       .getSessionReport(sessionId, bearer)
       .then(setReport)
-      .catch((err) => setError(err.message));
-  }, [sessionId, bearer, navigate]);
+      .catch((err) => setError(friendlyError(err)));
+  }, [sessionId, bearer, navigate, attempt]);
 
   if (error) {
     return (
       <div className="report-page error">
-        <p>{error}</p>
-        <button onClick={() => navigate("/scenarios")} type="button">
-          Retour aux scénarios
-        </button>
+        <ErrorPanel
+          error={error}
+          onRetry={() => setAttempt((n) => n + 1)}
+          onBack={() => navigate("/scenarios")}
+        />
       </div>
     );
   }

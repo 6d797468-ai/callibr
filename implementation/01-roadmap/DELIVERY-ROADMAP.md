@@ -107,9 +107,30 @@ assistance.
   `GET /api/v1/pilot/dashboard` — 4 widgets (KPI, entonnoir 6 etapes, activite
   recente, alertes), sans metriques techniques ; alimente par les stores de
   persistance via `PersistenceFactory` (memory en demo, Postgres en prod).
+- **WP-002 Error UX ✅** (2026-07-31) : aucun ecran ne montre d'erreur
+  "technique" brute. Corps d'erreur backend structure
+  (`code/title/explanation/action/retryable/trace_id` + statuts coherents :
+  `llm_error`→503, `DATASTORE_UNAVAILABLE`→503, `REPORT_UNAVAILABLE`→503 ;
+  handlers globaux Exception/HTTPException/422) ; taxonomy frontend couvrant
+  les 8 cas (LLM, STT/TTS, timeout, reseau, scenario introuvable, rapport
+  indisponible, PostgreSQL inaccessible, erreur inattendue) ; composants
+  `ErrorPanel` + `ErrorBoundary` ; bouton de reprise sur toutes les pages ;
+  timeout client 30 s.
+- **WP-003 Empty states** (P0) : aucune page vide — chaque ecran guide
+  l'utilisateur vers l'action suivante (aucune simulation, aucun rapport, aucun
+  feedback, aucun evenement, aucun scenario personnalise).
+- **WP-004 Onboarding polish** (P0) : animations, micro-copy, hierarchie
+  visuelle, indicateurs de progression, messages rassurants. Aucune nouvelle
+  logique.
 - onboarding simplifie ;
 - UX des erreurs et des etats vides ;
 - documentation d'exploitation.
+
+### EP-010 — Architecture Cleanup (dette planifiee)
+
+Les 12 violations d'architecture et la 1 capability < 50 % sont traitees apres
+le premier pilote, sauf si l'une d'elles devient un blocage (fuite
+d'abstraction, couplage bloquant EP-007/EP-008, risque de corruption).
 
 ### EP-008 — Product Observability
 

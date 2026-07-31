@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { apiFetch } from "../lib/api";
+import ErrorPanel from "../components/ErrorPanel";
+import { friendlyError, type UserFacingError } from "../lib/errors";
 
 type ReplayTurn = {
   turn_index: number;
@@ -29,19 +31,34 @@ export default function ReplayPage({ token }: Props) {
   const [replay, setReplay] = useState<SessionReplay | null>(null);
   const [currentTurn, setCurrentTurn] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [error, setError] = useState<UserFacingError | null>(null);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     if (!sessionId || !bearer) {
       navigate("/scenarios");
       return;
     }
+    setError(null);
     apiFetch<SessionReplay>(
       `/api/v1/simulations/${sessionId}/replay`,
       bearer,
     )
       .then(setReplay)
-      .catch(() => navigate("/scenarios"));
-  }, [sessionId, bearer, navigate]);
+      .catch((err) => setError(friendlyError(err)));
+  }, [sessionId, bearer, navigate, attempt]);
+
+  if (error) {
+    return (
+      <div className="replay-page error">
+        <ErrorPanel
+          error={error}
+          onRetry={() => setAttempt((n) => n + 1)}
+          onBack={() => navigate("/scenarios")}
+        />
+      </div>
+    );
+  }
 
   if (!replay) {
     return (

@@ -7,6 +7,9 @@ import type {
   SimulationEvaluation,
   SimulationSession,
 } from "../lib/types";
+import { ApiError } from "../lib/types";
+import { friendlyError, type UserFacingError } from "../lib/errors";
+import ErrorPanel from "../components/ErrorPanel";
 import VoiceChatPanel from "../components/VoiceChatPanel";
 
 type Props = {
@@ -263,7 +266,8 @@ function CrmPanel({
   const bearer = token ?? sessionStorage.getItem("callibr_token");
   const [actions, setActions] = useState<CrmActionDefinition[]>([]);
   const [audit, setAudit] = useState<AuditRecord[]>([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<UserFacingError | null>(null);
+  const lastActionRef = useRef("");
 
   useEffect(() => {
     if (!session || !bearer) return;
@@ -274,7 +278,8 @@ function CrmPanel({
   async function execute(actionId: string) {
     if (!session || !bearer) return;
     try {
-      setError("");
+      setError(null);
+      lastActionRef.current = actionId;
       await api.executeCrmAction(session.session_id, actionId, bearer);
       const [updated] = await Promise.all([
         api.getSession(session.session_id, bearer),
@@ -282,7 +287,7 @@ function CrmPanel({
       ]);
       window.dispatchEvent(new CustomEvent("sim:refresh", { detail: updated }));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Action échouée");
+      setError(friendlyError(err));
     }
   }
 
@@ -314,7 +319,14 @@ function CrmPanel({
         ))}
       </div>
 
-      {error ? <p className="error-inline">{error}</p> : null}
+      {error ? (
+        <ErrorPanel
+          error={error}
+          onRetry={() => {
+            if (lastActionRef.current) void execute(lastActionRef.current);
+          }}
+        />
+      ) : null}
 
       {session?.crm_actions && session.crm_actions.length > 0 && (
         <>
@@ -348,9 +360,11 @@ export default function SimulationPage({ token }: Props) {
   const bearer = token ?? sessionStorage.getItem("callibr_token");
   const [session, setSession] = useState<SimulationSession | null>(null);
   const [thinking, setThinking] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<UserFacingError | null>(null);
   const [voiceMode, setVoiceMode] = useState(false);
   const [voiceSessionId, setVoiceSessionId] = useState<string | null>(null);
+  const [startAttempt, setStartAttempt] = useState(0);
+  const lastMessageRef = useRef("");
 
   useEffect(() => {
     if (!scenarioId) {
@@ -361,14 +375,15 @@ export default function SimulationPage({ token }: Props) {
       navigate("/");
       return;
     }
+    setError(null);
     api
       .startSimulation(scenarioId, bearer)
       .then((s) => {
         setSession(s);
-        setError("");
+        setError(null);
       })
-      .catch((err) => setError(err.message));
-  }, [scenarioId, bearer, navigate]);
+      .catch((err) => setError(friendlyError(err)));
+  }, [scenarioId, bearer, navigate, startAttempt]);
 
   useEffect(() => {
     function handler(e: Event) {
@@ -386,29 +401,49 @@ export default function SimulationPage({ token }: Props) {
     fetch(`${API_BASE_URL}/api/v1/voice/sessions?simulation_session_id=${session.session_id}`, {
       method: "POST",
     })
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.session_id) setVoiceSessionId(data.session_id);
+      .then(async (r) => {
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) {
+          throw new ApiError(
+            data.code ?? "VOICE_UNAVAILABLE",
+            "http",
+            data.message ?? `HTTP ${r.status}`,
+            data,
+            r.status,
+          );
+        }
+        if (data.session_id) {
+          setVoiceSessionId(data.session_id);
+          setError(null);
+        }
       })
-      .catch(() => setError("Impossible de créer la session vocale"));
+      .catch((err) => setError(friendlyError(err)));
   }, [voiceMode, session?.session_id]);
 
   const sendMessage = useCallback(
     async (content: string) => {
       if (!session || !bearer) return;
       setThinking(true);
-      setError("");
+      setError(null);
+      lastMessageRef.current = content;
       try {
         const result = await api.sendMessage(session.session_id, content, bearer);
         setSession(result.session);
+        setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Erreur d'envoi");
+        setError(friendlyError(err));
       } finally {
         setThinking(false);
       }
     },
     [session?.session_id, bearer],
   );
+
+  function retrySend() {
+    if (lastMessageRef.current) {
+      void sendMessage(lastMessageRef.current);
+    }
+  }
 
   function viewReport() {
     if (!session) return;
@@ -417,7 +452,7 @@ export default function SimulationPage({ token }: Props) {
 
   function replay() {
     setSession(null);
-    setError("");
+    setError(null);
     navigate(`/simulation?scenario=${scenarioId}`);
   }
 
@@ -458,7 +493,25 @@ export default function SimulationPage({ token }: Props) {
         </div>
       </header>
 
-      {error && <div className="sim-error">{error}</div>}
+      {error && !session && (
+        <div className="sim-error">
+          <ErrorPanel
+            error={error}
+            onRetry={() => setStartAttempt((n) => n + 1)}
+            onBack={() => navigate("/scenarios")}
+          />
+        </div>
+      )}
+
+      {error && session && (
+        <div className="sim-error">
+          <ErrorPanel
+            error={error}
+            onRetry={retrySend}
+            onBack={() => navigate("/scenarios")}
+          />
+        </div>
+      )}
 
       <div className="sim-layout">
         <aside className="sim-sidebar">

@@ -151,3 +151,61 @@ export const DEMO_LOGIN = {
   email: "learner@demo.callibr.local",
   password: "callibr-demo",
 };
+
+export type ApiErrorCause = "timeout" | "network" | "http" | "parse";
+
+export type ApiErrorPayload = {
+  code?: string | null;
+  message?: string | null;
+  title?: string | null;
+  explanation?: string | null;
+  action?: string | null;
+  retryable?: boolean | null;
+  details?: Record<string, unknown> | null;
+  http_status?: number | null;
+  trace_id?: string | null;
+};
+
+export class ApiError extends Error {
+  readonly code: string;
+  readonly causeType: ApiErrorCause;
+  readonly httpStatus: number | null;
+  readonly payload: ApiErrorPayload;
+  readonly traceId?: string;
+  readonly original?: unknown;
+
+  constructor(
+    code: string,
+    causeType: ApiErrorCause,
+    message: string,
+    payload: ApiErrorPayload = {},
+    httpStatus: number | null = null,
+    original?: unknown,
+    traceId?: string,
+  ) {
+    super(message);
+    this.name = "ApiError";
+    this.code = code;
+    this.causeType = causeType;
+    this.httpStatus = httpStatus;
+    this.payload = payload;
+    this.traceId = traceId;
+    this.original = original;
+  }
+
+  static fromHttp(
+    status: number,
+    payload: ApiErrorPayload,
+    traceId?: string,
+  ): ApiError {
+    return new ApiError(
+      payload.code ?? `HTTP_${status}`,
+      "http",
+      payload.message ?? `HTTP ${status}`,
+      payload,
+      status,
+      undefined,
+      traceId,
+    );
+  }
+}

@@ -3,10 +3,12 @@ from __future__ import annotations
 import json
 import logging
 import os
+from contextlib import suppress
 from functools import lru_cache
 from typing import Annotated
 
 from callibr_api.config import get_settings
+from callibr_kernel import CallibrError
 from callibr_voice import (
     DeepgramSTTAdapter,
     ElevenLabsTTSAdapter,
@@ -76,7 +78,14 @@ def get_voice_session(
 ) -> dict:
     session = service.get_session(session_id)
     if session is None:
-        return {"error": "not_found"}
+        raise CallibrError(
+            "VOICE_SESSION_NOT_FOUND",
+            "Session vocale introuvable.",
+            title="Session vocale introuvable",
+            explanation="La session vocale n'existe plus.",
+            action="Relancez la conversation vocale.",
+            retryable=True,
+        )
     return {
         "session_id": session.session_id,
         "state": session.state.value,
@@ -97,7 +106,14 @@ def end_voice_session(
         session = service.end_session(session_id)
         return {"status": "ended", "state": session.state.value}
     except ValueError as e:
-        return {"error": str(e)}
+        raise CallibrError(
+            "VOICE_SESSION_INVALID_STATE",
+            str(e),
+            title="Session vocale indisponible",
+            explanation=str(e),
+            action="Réessayez.",
+            retryable=True,
+        ) from e
 
 
 @router.websocket("/sessions/{session_id}/stream")
@@ -162,6 +178,14 @@ async def voice_stream(websocket: WebSocket, session_id: str) -> None:
     except WebSocketDisconnect:
         log.info("Voice session %s disconnected", session_id)
         service.end_session(session_id)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         log.error("Voice session %s error: %s", session_id, exc)
+        with suppress(Exception):
+            await websocket.send_json({
+                "type": "error",
+                "code": "VOICE_STREAM_ERROR",
+                "title": "Conversation vocale interrompue",
+                "message": "Une erreur technique est survenue pendant la conversation vocale.",
+                "action": "Réessayez.",
+            })
         service.end_session(session_id)

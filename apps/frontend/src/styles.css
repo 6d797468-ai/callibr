@@ -758,6 +758,58 @@ button, input { font: inherit; }
   font-size: 12px;
 }
 
+/* ─── Error Panel (Error UX) ─── */
+
+.error-boundary-wrap {
+  display: contents;
+}
+
+.error-boundary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+}
+
+.error-panel {
+  max-width: 480px;
+  margin: 16px auto;
+  padding: 20px;
+  border: 1px solid #f4b7b0;
+  border-radius: 8px;
+  background: #fff8f7;
+  text-align: left;
+}
+
+.error-panel-title {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #7a1c17;
+}
+
+.error-panel-explanation {
+  margin: 0 0 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+}
+
+.error-panel-action {
+  margin: 0 0 16px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #6b7a86;
+  font-style: italic;
+}
+
+.error-panel-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 /* ─── Report Page ─── */
 
 .report-page {

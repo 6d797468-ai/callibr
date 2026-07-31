@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { SimulationSession } from "../lib/types";
+import ErrorPanel from "./ErrorPanel";
+import type { UserFacingError } from "../lib/errors";
 
 const VOICE_WS_URL =
   import.meta.env.VITE_CALLIBR_WS_URL ?? "ws://localhost:8000";
@@ -77,7 +79,9 @@ export default function VoiceChatPanel({
 }: Props) {
   const [micState, setMicState] = useState<MicState>("idle");
   const [transcript, setTranscript] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState<UserFacingError | null>(null);
+  const [wsAttempt, setWsAttempt] = useState(0);
+  const retryRef = useRef<(() => void) | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -96,9 +100,19 @@ export default function VoiceChatPanel({
       );
       ws.onopen = () => setMicState("listening");
       ws.onclose = () => {
-        if (micState !== "idle") setMicState("idle");
+        setMicState((m) => (m === "idle" ? m : "idle"));
       };
-      ws.onerror = () => setError("Connexion vocale perdue");
+      ws.onerror = () => {
+        const friendly: UserFacingError = {
+          title: "Connexion vocale perdue",
+          explanation:
+            "La connexion au serveur vocal a été interrompue.",
+          action: "Cliquez sur « Réessayer » pour rétablir la connexion.",
+          retryable: true,
+        };
+        retryRef.current = retryConnection;
+        setError(friendly);
+      };
       ws.onmessage = async (event) => {
         if (event.data instanceof Blob) {
           setMicState("speaking");
@@ -122,6 +136,17 @@ export default function VoiceChatPanel({
               setMicState("idle");
             } else if (msg.type === "info") {
               setTranscript(msg.message);
+            } else if (msg.type === "error") {
+              const friendly: UserFacingError = {
+                title: msg.title ?? "Conversation vocale interrompue",
+                explanation:
+                  msg.message ??
+                  "Une erreur technique est survenue pendant la conversation vocale.",
+                action: msg.action ?? "Réessayez.",
+                retryable: true,
+              };
+              retryRef.current = retryConnection;
+              setError(friendly);
             }
           } catch {
             // ignore parse errors
@@ -130,8 +155,14 @@ export default function VoiceChatPanel({
       };
       wsRef.current = ws;
     },
-    [onSend, micState],
+    [onSend],
   );
+
+  function retryConnection() {
+    setError(null);
+    wsRef.current?.close();
+    setWsAttempt((n) => n + 1);
+  }
 
   useEffect(() => {
     if (voiceSessionId && session?.status === "active") {
@@ -140,11 +171,11 @@ export default function VoiceChatPanel({
     return () => {
       wsRef.current?.close();
     };
-  }, [voiceSessionId, session?.status, connectWs]);
+  }, [voiceSessionId, session?.status, connectWs, wsAttempt]);
 
   async function startListening() {
     if (micState === "listening") return;
-    setError("");
+    setError(null);
     setTranscript("");
     try {
       setMicState("requesting");
@@ -177,11 +208,19 @@ export default function VoiceChatPanel({
       mediaRecorderRef.current = recorder;
       setMicState("listening");
     } catch (err) {
-      setError(
-        err instanceof DOMException && err.name === "NotAllowedError"
-          ? "Microphone non autorisé"
-          : "Erreur microphone",
-      );
+      const denied = err instanceof DOMException && err.name === "NotAllowedError";
+      const friendly: UserFacingError = {
+        title: denied ? "Microphone non autorisé" : "Erreur microphone",
+        explanation: denied
+          ? "L'accès au microphone a été refusé."
+          : "Le microphone n'a pas pu être démarré.",
+        action: denied
+          ? "Autorisez l'accès au micro dans votre navigateur, puis réessayez."
+          : "Vérifiez votre microphone, puis réessayez.",
+        retryable: true,
+      };
+      retryRef.current = () => void startListening();
+      setError(friendly);
       setMicState("idle");
     }
   }
@@ -254,7 +293,12 @@ export default function VoiceChatPanel({
           <p className="voice-transcript">"{transcript}"</p>
         )}
 
-        {error && <p className="error-inline">{error}</p>}
+        {error && (
+          <ErrorPanel
+            error={error}
+            onRetry={() => retryRef.current?.()}
+          />
+        )}
 
         <button
           className={`voice-ptt-btn ${micState === "listening" ? "recording" : ""}`}

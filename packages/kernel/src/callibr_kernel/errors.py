@@ -12,11 +12,19 @@ class CallibrError(Exception):
         message: str,
         *,
         details: dict[str, Any] | None = None,
+        title: str | None = None,
+        explanation: str | None = None,
+        action: str | None = None,
+        retryable: bool = False,
     ) -> None:
         super().__init__(message)
         self.code = code
         self.message = message
         self.details = details or {}
+        self.title = title
+        self.explanation = explanation
+        self.action = action
+        self.retryable = retryable
 
 
 class HandlerAlreadyRegisteredError(CallibrError):
