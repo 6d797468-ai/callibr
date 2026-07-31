@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Annotated
 
 from callibr_contracts import (
@@ -12,6 +12,7 @@ from callibr_contracts import (
     ExecuteCrmActionRequest,
     ExecuteCrmActionResponse,
     LoginRequest,
+    PilotDashboard,
     ScenarioSummary,
     SendMessageRequest,
     SendMessageResponse,
@@ -21,14 +22,14 @@ from callibr_contracts import (
     StartSimulationRequest,
 )
 from callibr_contracts.feedback import SimulationFeedback
+from callibr_contracts.telemetry import FeedbackRecord, ProductEvent
 from callibr_identity import DemoIdentityProvider
 from callibr_kernel import CallibrError, TenantContext, new_trace_id
 from callibr_seed import load_demo_catalogue
 from callibr_simulation import SimulationService
 from callibr_telemetry import configure_logging
-from callibr_telemetry.dashboard import DashboardData, DashboardService
-from callibr_telemetry.feedback import FeedbackRecord, get_feedback_store
-from callibr_telemetry.product import ProductEvent, emit_product_event, get_product_event_store
+from callibr_telemetry.dashboard import DashboardService
+from callibr_telemetry.pilot import PilotDashboardService
 from callibr_telemetry.readiness import PilotReadinessService, ReadinessResult
 from callibr_telemetry.report import generate_pdf
 from fastapi import Depends, FastAPI, Query, Request, Response
@@ -40,9 +41,12 @@ from pydantic import BaseModel
 from callibr_api.config import ConfigValidator, get_settings
 from callibr_api.dependencies import (
     get_dashboard_service,
+    get_feedback_store,
     get_identity_provider,
     get_persona_service,
+    get_pilot_dashboard_service,
     get_procedure_service,
+    get_product_event_store,
     get_readiness_service,
     get_rule_service,
     get_scenario_service,
@@ -61,7 +65,33 @@ SimulationServiceDep = Annotated[SimulationService, Depends(get_simulation_servi
 TenantContextDep = Annotated[TenantContext, Depends(get_tenant_context)]
 IdentityProviderDep = Annotated[DemoIdentityProvider, Depends(get_identity_provider)]
 DashboardServiceDep = Annotated[DashboardService, Depends(get_dashboard_service)]
+PilotDashboardServiceDep = Annotated[PilotDashboardService, Depends(get_pilot_dashboard_service)]
 ReadinessServiceDep = Annotated[PilotReadinessService, Depends(get_readiness_service)]
+
+
+def _emit_product_event(
+    event_type: str,
+    tenant_id: str = "tenant_demo",
+    scenario_id: str = "",
+    session_id: str = "",
+    duration: float = 0.0,
+    metadata: dict | None = None,
+) -> None:
+    store = get_product_event_store()
+    store.record(
+        ProductEvent(
+            event_type=event_type,
+            tenant_id=tenant_id,
+            timestamp=datetime.now(UTC).isoformat(),
+            scenario_id=scenario_id,
+            persona_id="",
+            procedure_id="",
+            session_id=session_id,
+            duration=duration,
+            version="0.1.0",
+            metadata=metadata,
+        )
+    )
 
 
 def _status_code_for(error: CallibrError) -> int:
@@ -162,7 +192,7 @@ def create_app() -> FastAPI:
             update={"tenant_id": request.tenant_id or context.tenant_id}
         )
         token = identity_provider.login(effective_request, context.trace_id or "-")
-        emit_product_event("LoginSucceeded", tenant_id=token.user.tenant_id)
+        _emit_product_event("LoginSucceeded", tenant_id=token.user.tenant_id)
         return token
 
     @app.get("/api/v1/scenarios", response_model=list[ScenarioSummary], tags=["scenarios"])
@@ -189,7 +219,7 @@ def create_app() -> FastAPI:
             }
         )
         session = service.start_session(effective_request, context)
-        emit_product_event(
+        _emit_product_event(
             "ScenarioStarted",
             tenant_id=context.tenant_id,
             scenario_id=session.scenario.scenario_id,
@@ -209,7 +239,7 @@ def create_app() -> FastAPI:
     ) -> SimulationSession:
         session = service.get_session(session_id, context)
         if session.status == "active" and len(session.messages) > 1:
-            emit_product_event(
+            _emit_product_event(
                 "SessionResumed",
                 tenant_id=context.tenant_id,
                 scenario_id=session.scenario.scenario_id,
@@ -231,14 +261,14 @@ def create_app() -> FastAPI:
         result = service.send_message(session_id, request, context)
         msg_count = len(result.session.messages)
         if msg_count == 2:  # first reply = opening (customer) + first learner
-            emit_product_event(
+            _emit_product_event(
                 "FirstMessageSent",
                 tenant_id=context.tenant_id,
                 scenario_id=result.session.scenario.scenario_id,
                 session_id=session_id,
             )
         if result.session.status == "completed":
-            emit_product_event(
+            _emit_product_event(
                 "ConversationCompleted",
                 tenant_id=context.tenant_id,
                 scenario_id=result.session.scenario.scenario_id,
@@ -294,7 +324,7 @@ def create_app() -> FastAPI:
         service: SimulationServiceDep,
     ) -> SessionReport:
         report = service.get_session_report(session_id, context)
-        emit_product_event(
+        _emit_product_event(
             "ReportViewed",
             tenant_id=context.tenant_id,
             scenario_id=report.scenario.scenario_id,
@@ -330,9 +360,10 @@ def create_app() -> FastAPI:
             usefulness=feedback.usefulness,
             would_use_for_training=feedback.would_use_for_training,
             free_text=feedback.free_text,
+            submitted_at=datetime.now(UTC).isoformat(),
         )
         store.submit(record)
-        emit_product_event(
+        _emit_product_event(
             "FeedbackSubmitted",
             tenant_id=record.tenant_id,
             session_id=record.session_id,
@@ -351,15 +382,15 @@ def create_app() -> FastAPI:
     def feedback_summary() -> dict:
         store = get_feedback_store()
         return {
-            "count": len(store._records),
+            "count": store.count(),
             "average_satisfaction": round(store.average_satisfaction(), 1),
             "would_use_counts": store.count_would_use(),
         }
 
-    @app.get("/api/v1/pilot/dashboard", response_model=DashboardData, tags=["pilot"])
+    @app.get("/api/v1/pilot/dashboard", response_model=PilotDashboard, tags=["pilot"])
     def pilot_dashboard(
-        dashboard: DashboardServiceDep,
-    ) -> DashboardData:
+        dashboard: PilotDashboardServiceDep,
+    ) -> PilotDashboard:
         return dashboard.compute()
 
     @app.get("/api/v1/pilot/readiness", response_model=ReadinessResult, tags=["pilot"])
@@ -544,7 +575,7 @@ def create_app() -> FastAPI:
 
     @app.post("/api/v1/product/events/ingest", status_code=204, tags=["product"])
     def ingest_product_event(event: IngestProductEvent) -> None:
-        emit_product_event(
+        _emit_product_event(
             event_type=event.event_type,
             tenant_id=event.tenant_id,
             scenario_id=event.scenario_id,

@@ -28,7 +28,6 @@ from callibr_persistence import (
     InMemoryProcedureStore,
     InMemoryRuleStore,
     InMemoryScenarioDefinitionStore,
-    InMemorySimulationSessionStore,
     InMemoryTransactionManager,
     PostgresAuditEventStore,
     PostgresConversationStore,
@@ -37,9 +36,10 @@ from callibr_persistence import (
     PostgresProcedureStore,
     PostgresRuleStore,
     PostgresScenarioDefinitionStore,
-    PostgresSimulationSessionStore,
     PostgresTransactionManager,
 )
+from callibr_persistence.providers.base import PersistenceProvider
+from callibr_persistence.providers.factory import PersistenceFactory
 from callibr_persona import (
     PersonaRegistry,
     PersonaService,
@@ -63,6 +63,7 @@ from callibr_scenario import (
 )
 from callibr_simulation import SimulationService
 from callibr_telemetry.dashboard import DashboardService
+from callibr_telemetry.pilot import PilotDashboardService
 from callibr_telemetry.readiness import PilotReadinessService
 from fastapi import Header, Request
 
@@ -300,13 +301,30 @@ def get_conversation_service() -> ConversationService:
 
 
 @lru_cache
-def get_session_store() -> InMemorySimulationSessionStore | PostgresSimulationSessionStore:
+def get_persistence_provider() -> PersistenceProvider:
     settings = get_settings()
+    provider = PersistenceFactory.create(
+        settings.persistence_backend.lower(),
+        settings.database_url,
+    )
     if settings.persistence_backend.lower() == "postgres":
-        store = PostgresSimulationSessionStore(settings.database_url)
-        store.init_schema()
-        return store
-    return InMemorySimulationSessionStore()
+        provider.init_schema()
+    return provider
+
+
+@lru_cache
+def get_session_store():
+    return get_persistence_provider().simulation_store
+
+
+@lru_cache
+def get_feedback_store():
+    return get_persistence_provider().feedback_store
+
+
+@lru_cache
+def get_product_event_store():
+    return get_persistence_provider().analytics_store
 
 
 @lru_cache
@@ -372,7 +390,20 @@ def get_tenant_context(
 
 @lru_cache
 def get_dashboard_service() -> DashboardService:
-    return DashboardService(get_session_store())
+    return DashboardService(
+        get_session_store(),
+        get_feedback_store(),
+        get_product_event_store(),
+    )
+
+
+@lru_cache
+def get_pilot_dashboard_service() -> PilotDashboardService:
+    return PilotDashboardService(
+        get_session_store(),
+        get_feedback_store(),
+        get_product_event_store(),
+    )
 
 
 @lru_cache

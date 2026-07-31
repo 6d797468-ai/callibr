@@ -11,6 +11,9 @@ class MemoryFeedbackStore:
     def list(self, limit: int = 100) -> list[FeedbackRecord]:
         return self._records[-limit:]
 
+    def count(self) -> int:
+        return len(self._records)
+
     def count_would_use(self) -> dict[str, int]:
         counts: dict[str, int] = {"yes": 0, "maybe": 0, "no": 0}
         for r in self._records:

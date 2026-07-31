@@ -2,9 +2,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from callibr_telemetry.feedback import get_feedback_store
-from callibr_telemetry.product import get_product_event_store
-
 
 @dataclass
 class DashboardOverview:
@@ -50,13 +47,15 @@ class DashboardData:
 
 
 class DashboardService:
-    def __init__(self, session_store) -> None:
+    def __init__(self, session_store, feedback_store, product_event_store) -> None:
         self._session_store = session_store
+        self._feedback_store = feedback_store
+        self._product_event_store = product_event_store
 
     def compute(self) -> DashboardData:
         sessions = self._session_store.list()
-        event_store = get_product_event_store()
-        feedback_store = get_feedback_store()
+        event_store = self._product_event_store
+        feedback_store = self._feedback_store
 
         # Overview
         started = event_store.count_by_type().get("ScenarioStarted", 0)
@@ -114,7 +113,7 @@ class DashboardService:
         )
 
         # Product
-        feedback_count = len(feedback_store._records)
+        feedback_count = len(feedback_store.list(limit=10_000))
         feedback = DashboardProduct(
             average_satisfaction=round(feedback_store.average_satisfaction(), 1) if feedback_count else 0.0,
             would_use_counts=feedback_store.count_would_use(),

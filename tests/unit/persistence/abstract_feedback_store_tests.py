@@ -19,7 +19,11 @@ class AbstractFeedbackStoreTests(ABC):
         store.submit(FeedbackRecord("s1", "t1", "l1", 5, 4, 3, 4, "yes", "great", "2026-07-31T10:00:00"))
         store.submit(FeedbackRecord("s2", "t1", "l2", 3, 3, 3, 3, "no", "bad", "2026-07-31T11:00:00"))
 
+        assert store.count() == 2
         counts = store.count_would_use()
         assert counts["yes"] == 1
         assert counts.get("no", 0) >= 1
         assert store.average_satisfaction() == 4.0
+
+    def test_count_empty(self, store: FeedbackStore):
+        assert store.count() == 0

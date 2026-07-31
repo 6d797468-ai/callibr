@@ -1,8 +1,25 @@
 # Delivery Roadmap
 
-Mise a jour : 2026-07-27
+Mise a jour : 2026-07-31
 
 Cadence recommandee : sprint de 2 semaines.
+
+## Baseline actuelle — v0.1.0-rc3
+
+La version **v0.1.0-rc3** (2026-07-31) est la reference immuable. Elle couvre les
+milestones M0 a M4 ci-dessous ainsi que la persistance PostgreSQL durable (EP-006).
+
+Etat : architecture gelee, 351 tests unitaires + integration PostgreSQL valides,
+5 pipelines CI verts (Backend Quality, Frontend Build, Security Scan, Shell
+Validation, PostgreSQL Integration), protection de `main` adaptee au developpement
+solo (checks obligatoires, merge via PR, push direct interdit).
+
+A partir de maintenant :
+
+- toutes les nouvelles fonctionnalites partent de RC3 ;
+- les moteurs principaux restent gelee ;
+- toute evolution doit etre justifiee par un besoin utilisateur, un retour pilote
+  ou un bug.
 
 ## Vue Globale
 
@@ -72,4 +89,59 @@ Inclut :
 - seed demo ;
 - tests d'integration ;
 - packaging local.
+
+---
+
+## Phase 2 — Pilot Success (EP-007/008/009)
+
+Objectif : transformer RC3 en un produit utilise par un premier pilote. La
+reussite n'est plus mesuree par des metriques techniques (tests, packages,
+moteurs) mais par les KPIs produit ci-dessous.
+
+### EP-007 — Pilot Success
+
+Objectif : permettre a une entreprise de realiser une premiere session sans
+assistance.
+
+- **WP-001 Dashboard pilote ✅** (2026-07-31) : endpoint unique
+  `GET /api/v1/pilot/dashboard` — 4 widgets (KPI, entonnoir 6 etapes, activite
+  recente, alertes), sans metriques techniques ; alimente par les stores de
+  persistance via `PersistenceFactory` (memory en demo, Postgres en prod).
+- onboarding simplifie ;
+- UX des erreurs et des etats vides ;
+- documentation d'exploitation.
+
+### EP-008 — Product Observability
+
+Objectif : comprendre precisement l'usage reel.
+
+- persistance des `ProductEvent` ;
+- tableaux de bord internes ;
+- entonnoir d'utilisation (Wizard -> Simulation -> Rapport -> Feedback) ;
+- indicateurs d'abandon.
+
+### EP-009 — Voice Production Readiness
+
+Objectif : transformer le Voice Runtime en differenciateur commercial.
+
+- mesure de latence STT/TTS ;
+- qualite audio ;
+- interruptions (barge-in) ;
+- streaming optimise ;
+- metriques de satisfaction.
+
+## Tableau de bord KPI — Release 0.1
+
+Metrique principale du pilot : la validation produit par l'usage.
+
+| KPI | Cible Release 0.1 |
+| --- | --- |
+| Installation reussie | > 95 % |
+| Wizard termine | > 90 % |
+| Premiere simulation lancee | > 80 % |
+| Simulation terminee | > 70 % |
+| Rapport consulte | > 60 % |
+| Feedback envoye | > 40 % |
+| Satisfaction moyenne | >= 4/5 |
+| Temps jusqu'a la premiere simulation | < 5 min |
 

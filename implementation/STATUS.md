@@ -1,59 +1,35 @@
 # Implementation Status
 
-Mise a jour : 2026-07-28
+Mise a jour : 2026-07-31
 
-## Etat Courant
+## Baseline
 
-Callibr est passe de la phase documentaire a une premiere tranche executable.
+- Release : **v0.1.0-rc3**
+- Commit : `f8d4935` (squash PR #1)
+- CI : 5/5 pipelines verts
+- GitHub : PR #1 fusionnee
 
-## Termine
+## Etat Produit
 
-- monorepo initialise ;
-- backend FastAPI minimal ;
-- frontend Vite/React minimal ;
-- docker compose local ;
-- contexte tenant/user demo ;
-- endpoint identite `/api/v1/me` ;
-- endpoint login `/api/v1/auth/login` ;
-- token bearer signe pour le MVP ;
-- hash mot de passe PBKDF2 ;
-- stores identite memoire/PostgreSQL ;
-- propagation `X-Trace-Id` ;
-- contrats API de simulation ;
-- contrat d'audit `AuditRecord` ;
-- package de persistance `callibr_persistence` ;
-- kernel minimal : erreurs, ID, temps, command bus, event bus ;
-- journalisation structuree avec `trace_id` et `tenant_id` ;
-- scenario catalog en memoire pour le Domain Pack Support/SAV ;
-- moteur de simulation texte en memoire ;
-- moteur d'actions CRM simulees ;
-- endpoints API scenarios et simulations ;
-- endpoints API actions CRM ;
-- endpoint API audit par session ;
-- endpoint API rapport de session ;
-- connexion frontend/API sur la boucle de simulation ;
-- execution d'actions CRM depuis le frontend ;
-- affichage audit dans le frontend ;
-- affichage scorecard et resume de rapport dans le frontend ;
-- login demo automatique dans le frontend ;
-- schema PostgreSQL initial pour sessions et audit ;
-- schema PostgreSQL initial pour tenants et users ;
-- moteur d'evaluation detaillee `callibr_evaluation` ;
-- scorecard MVP par criteres ;
-- contrat `SessionReport` ;
-- controle tenant sur les lectures session, CRM actions, audit et rapport ;
-- tests API et unitaires.
+- First Run Wizard ✅
+- Guided Simulation ✅
+- Voice Runtime v1 ✅
+- Live Coaching ✅
+- Executive Report PDF ✅
+- Feedback ✅
+- Replay ✅
+- PostgreSQL Persistence ✅
+- **Pilot Dashboard (EP-007 WP-001) ✅** — cockpit 4 widgets (KPI, funnel 6 etapes, activite recente, alertes), sans metriques techniques, alimente par les stores de persistance (memory / postgres via `PersistenceFactory`)
 
-## En Cours
+## Qualite
 
-- durcissement de la premiere tranche verticale MVP ;
-- preparation du Procedure Engine MVP ;
-- preparation des tests d'integration PostgreSQL.
+- 360 tests unitaires + API, 23 tests integration PostgreSQL validee
+- CI verte (Backend Quality, Frontend Build, Security Scan, Shell Validation, PostgreSQL Integration)
+- Architecture gelee
+- Engineering Score : 83.2 % (release gate CI — hausse apres WP-001)
 
-## Prochaines Etapes
+## Risques Ouverts
 
-1. Introduire le Procedure Engine MVP.
-2. Ajouter les tests d'integration PostgreSQL via docker compose.
-3. Prendre en compte les actions CRM dans le score final.
-4. Ajouter roles et permissions par policy.
-5. Preparer le moteur LLM derriere une interface stable.
+- Aucun P0 technique
+- Validation utilisateur reelle non commencee
+- Pas encore de donnees pilote

@@ -1,135 +1,77 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../lib/api";
 
-type DashboardData = {
-  overview: {
-    simulations_started: number;
-    simulations_completed: number;
-    completion_rate: number;
-    average_duration_seconds: number;
-    active_users: number;
-    total_sessions: number;
-  };
-  performance: {
-    average_score: number;
-    score_trend: { label: string; value: number }[];
-    weakest_criteria: { label: string; average: number }[];
-    strongest_criteria: { label: string; average: number }[];
-  };
-  product: {
-    average_satisfaction: number;
-    would_use_counts: Record<string, number>;
-    abandon_count: number;
-    average_time_before_abandon: number;
-    replay_count: number;
-  };
-  business: {
-    scenario_ranking: {
-      scenario_id: string;
-      title: string;
-      average_score: number;
-      count: number;
-    }[];
-    difficulty_distribution: Record<string, number>;
-    average_duration_by_scenario: Record<string, number>;
-    satisfaction_by_scenario: Record<string, number>;
-  };
+type FunnelStage = {
+  id: string;
+  label: string;
+  count: number;
+  percentage: number;
 };
 
-type ReadinessResult = {
-  score: number;
-  status: "READY" | "ALMOST_READY" | "NOT_READY";
-  dimensions: {
-    adoption: number;
-    completion: number;
-    feedback: number;
-    stability: number;
-    analytics: number;
+type ActivityItem = {
+  timestamp: string;
+  actor: string;
+  action: string;
+  detail: string;
+};
+
+type DashboardAlert = {
+  level: "info" | "warning";
+  title: string;
+  message: string;
+};
+
+type PilotDashboard = {
+  overview: {
+    simulations_total: number;
+    success_rate: number;
+    average_satisfaction: number;
+    average_duration_minutes: number;
   };
+  funnel: FunnelStage[];
+  recent_activity: ActivityItem[];
+  alerts: DashboardAlert[];
 };
 
 type Props = {
   token: string | null;
 };
 
-function Gauge({ value, label, color }: { value: number; label: string; color: string }) {
-  const pct = Math.min(value, 100);
-  return (
-    <div className="gauge">
-      <svg viewBox="0 0 120 120" className="gauge-svg">
-        <circle cx="60" cy="60" r="52" fill="none" stroke="#eef2f5" strokeWidth="10" />
-        <circle
-          cx="60" cy="60" r="52"
-          fill="none" stroke={color}
-          strokeWidth="10"
-          strokeDasharray={`${(pct / 100) * 327} 327`}
-          strokeLinecap="round"
-          transform="rotate(-90 60 60)"
-        />
-        <text x="60" y="55" textAnchor="middle" fontSize="24" fontWeight="800" fill="#172026">
-          {pct}
-        </text>
-        <text x="60" y="75" textAnchor="middle" fontSize="10" fill="#526879">
-          /100
-        </text>
-      </svg>
-      <span className="gauge-label">{label}</span>
-    </div>
-  );
+function formatDuration(minutes: number): string {
+  if (minutes <= 0) return "—";
+  if (minutes < 60) return `${minutes} min`;
+  const h = Math.floor(minutes / 60);
+  const m = Math.round(minutes % 60);
+  return `${h}h${m > 0 ? ` ${m}min` : ""}`;
 }
 
-function ScoreRing({ value }: { value: number }) {
-  const pct = Math.min(Math.round(value), 100);
-  return (
-    <div className="score-ring-lg">
-      <span className="score-ring-value">{pct}</span>
-      <span className="score-ring-max">/100</span>
-    </div>
-  );
+function formatTimestamp(iso: string): string {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return iso;
+  return date.toLocaleString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function formatActor(actor: string): string {
+  if (!actor) return "Apprenant";
+  return actor.replace(/^(learner|agent)_/, "");
 }
 
 export default function PilotDashboardPage({ token }: Props) {
   const navigate = useNavigate();
   const bearer = token ?? sessionStorage.getItem("callibr_token");
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [readiness, setReadiness] = useState<ReadinessResult | null>(null);
+  const [data, setData] = useState<PilotDashboard | null>(null);
   const [error, setError] = useState("");
-  const [tab, setTab] = useState("overview");
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-
-  function downloadReport() {
-    const apiBase = import.meta.env.VITE_CALLIBR_API_BASE_URL ?? "http://localhost:8000";
-    const url = `${apiBase}/api/v1/pilot/report/export`;
-    // Use iframe trick for download with auth headers
-    const iframe = iframeRef.current;
-    if (!iframe) return;
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", url);
-    xhr.setRequestHeader("Authorization", `Bearer ${bearer}`);
-    xhr.setRequestHeader("X-Tenant-Id", "tenant_demo");
-    xhr.setRequestHeader("X-User-Id", "learner_demo");
-    xhr.responseType = "blob";
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        const blob = xhr.response;
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = `callibr-executive-report-${new Date().toISOString().slice(0, 10)}.pdf`;
-        a.click();
-        URL.revokeObjectURL(a.href);
-      }
-    };
-    xhr.send();
-  }
 
   useEffect(() => {
     if (!bearer) { navigate("/"); return; }
-    Promise.all([
-      apiFetch<DashboardData>("/api/v1/pilot/dashboard", bearer),
-      apiFetch<ReadinessResult>("/api/v1/pilot/readiness", bearer),
-    ])
-      .then(([d, r]) => { setData(d); setReadiness(r); })
+    apiFetch<PilotDashboard>("/api/v1/pilot/dashboard", bearer)
+      .then(setData)
       .catch((err) => setError(err.message));
   }, [bearer, navigate]);
 
@@ -144,7 +86,7 @@ export default function PilotDashboardPage({ token }: Props) {
     );
   }
 
-  if (!data || !readiness) {
+  if (!data) {
     return (
       <div className="dashboard-page loading">
         <div className="login-spinner" />
@@ -153,227 +95,110 @@ export default function PilotDashboardPage({ token }: Props) {
     );
   }
 
-  const readinessLabel = readiness.status === "READY" ? "Prêt" : readiness.status === "ALMOST_READY" ? "Presque prêt" : "Pas encore prêt";
-  const readinessColor = readiness.status === "READY" ? "#2f7d57" : readiness.status === "ALMOST_READY" ? "#e65100" : "#c62828";
+  const { overview } = data;
+  const kpis = [
+    { label: "Simulations", value: String(overview.simulations_total), suffix: "", hint: "formations lancées" },
+    { label: "Taux de réussite", value: `${overview.success_rate}`, suffix: "%", hint: "score ≥ 70/100" },
+    { label: "Satisfaction", value: `${overview.average_satisfaction}`, suffix: "/5", hint: "note moyenne" },
+    { label: "Durée", value: formatDuration(overview.average_duration_minutes), suffix: "", hint: "par simulation" },
+  ];
 
   return (
     <div className="dashboard-page">
-      <iframe ref={iframeRef} style={{ display: "none" }} title="download-helper" />
       <header className="dashboard-header">
         <div>
           <p className="eyebrow">Pilot Success Center</p>
-          <h1>Callibr — Release 0.1</h1>
+          <h1>Tableau de bord pilotage</h1>
         </div>
         <div className="dashboard-actions">
-          <button className="btn-primary" onClick={downloadReport} type="button">
-            Télécharger le rapport
-          </button>
           <button className="btn-secondary" onClick={() => navigate("/scenarios")} type="button">
             ← Scénarios
           </button>
         </div>
       </header>
 
-      {/* Readiness bar */}
-      <div className="readiness-bar">
-        <div className="readiness-info">
-          <span className="readiness-label">Pilot Readiness</span>
-          <span className="readiness-score" style={{ color: readinessColor }}>{readiness.score}%</span>
-          <span className={`readiness-status status-${readiness.status.toLowerCase()}`}>
-            {readinessLabel}
-          </span>
+      <div className="cockpit-layout">
+        <div className="cockpit-main">
+          {/* KPI cards */}
+          <div className="metric-grid">
+            {kpis.map((kpi) => (
+              <div className="metric-card" key={kpi.label}>
+                <span className="metric-value">
+                  {kpi.value}<span className="metric-suffix">{kpi.suffix}</span>
+                </span>
+                <span className="metric-label">{kpi.label}</span>
+                <span className="metric-hint">{kpi.hint}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Funnel */}
+          <section className="dashboard-card">
+            <h2>Parcours d'adoption</h2>
+            <p className="subtitle">Du premier lancement au retour des apprenants</p>
+            <div className="funnel">
+              {data.funnel.map((stage) => (
+                <div className="funnel-stage" key={stage.id}>
+                  <div className="funnel-head">
+                    <span className="funnel-label">{stage.label}</span>
+                    <span className="funnel-value">{stage.percentage}%</span>
+                    <span className="funnel-count">{stage.count}</span>
+                  </div>
+                  <div className="funnel-track">
+                    <div
+                      className="funnel-fill"
+                      style={{ width: `${Math.min(stage.percentage, 100)}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
         </div>
-        <div className="readiness-track">
-          <div className="readiness-fill" style={{ width: `${readiness.score}%`, background: readinessColor }} />
+
+        <div className="cockpit-side">
+          {/* Alerts */}
+          <section className="dashboard-card">
+            <h2>Alertes</h2>
+            {data.alerts.length === 0 ? (
+              <p className="empty-hint">Aucune alerte.</p>
+            ) : (
+              <div className="alerts">
+                {data.alerts.map((alert, i) => (
+                  <div className={`alert-card alert-${alert.level}`} key={i}>
+                    <span className="alert-icon">{alert.level === "warning" ? "⚠" : "✓"}</span>
+                    <div className="alert-body">
+                      <strong>{alert.title}</strong>
+                      <p>{alert.message}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* Recent activity */}
+          <section className="dashboard-card">
+            <h2>Activité récente</h2>
+            {data.recent_activity.length === 0 ? (
+              <p className="empty-hint">Aucune activité pour l'instant.</p>
+            ) : (
+              <ul className="activity-list">
+                {data.recent_activity.map((item, i) => (
+                  <li className="activity-item" key={`${item.timestamp}-${i}`}>
+                    <span className="activity-time">{formatTimestamp(item.timestamp)}</span>
+                    <div className="activity-body">
+                      <span className="activity-title">{item.action}</span>
+                      {item.detail && <span className="activity-detail">{item.detail}</span>}
+                      <span className="activity-actor">{formatActor(item.actor)}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
         </div>
       </div>
-
-      {/* Navigation tabs */}
-      <nav className="dashboard-tabs">
-        {(["overview", "performance", "product", "business"] as const).map((t) => (
-          <button
-            key={t}
-            className={`tab ${tab === t ? "tab-active" : ""}`}
-            onClick={() => setTab(t)}
-            type="button"
-          >
-            {t === "overview" ? "Vue d'ensemble" : t === "performance" ? "Performance" : t === "product" ? "Produit" : "Métier"}
-          </button>
-        ))}
-      </nav>
-
-      {/* Tab: Overview */}
-      {tab === "overview" && (
-        <div className="dashboard-section">
-          <div className="metric-grid">
-            <div className="metric-card">
-              <span className="metric-value">{data.overview.simulations_started}</span>
-              <span className="metric-label">Simulations lancées</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-value">{data.overview.simulations_completed}</span>
-              <span className="metric-label">Terminées</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-value">{data.overview.completion_rate}%</span>
-              <span className="metric-label">Taux de complétion</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-value">{Math.round(data.overview.average_duration_seconds / 60)}m</span>
-              <span className="metric-label">Durée moyenne</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-value">{data.overview.active_users}</span>
-              <span className="metric-label">Utilisateurs actifs</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-value">{data.overview.total_sessions}</span>
-              <span className="metric-label">Sessions totales</span>
-            </div>
-          </div>
-
-          {data.business.scenario_ranking.length > 0 && (
-            <section className="dashboard-card">
-              <h2>Classement des scénarios</h2>
-              <table className="ranking-table">
-                <thead>
-                  <tr><th>Scénario</th><th>Score moyen</th><th>Simulations</th></tr>
-                </thead>
-                <tbody>
-                  {data.business.scenario_ranking.map((s) => (
-                    <tr key={s.scenario_id}>
-                      <td>{s.title}</td>
-                      <td><strong>{s.average_score}</strong></td>
-                      <td>{s.count}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </section>
-          )}
-        </div>
-      )}
-
-      {/* Tab: Performance */}
-      {tab === "performance" && (
-        <div className="dashboard-section">
-          <div className="dashboard-card score-card">
-            <ScoreRing value={data.performance.average_score} />
-            <div>
-              <h2>Score moyen : {data.performance.average_score}/100</h2>
-              <p className="subtitle">Moyenne sur {data.overview.simulations_completed} simulation(s) terminée(s)</p>
-            </div>
-          </div>
-
-          <div className="criteria-columns">
-            {data.performance.weakest_criteria.length > 0 && (
-              <div className="dashboard-card">
-                <h2>Points faibles</h2>
-                <ul className="criteria-list weak">
-                  {data.performance.weakest_criteria.map((c) => (
-                    <li key={c.label}>
-                      <span className="cl-label">{c.label}</span>
-                      <span className="cl-value">{c.average}%</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {data.performance.strongest_criteria.length > 0 && (
-              <div className="dashboard-card">
-                <h2>Points forts</h2>
-                <ul className="criteria-list strong">
-                  {data.performance.strongest_criteria.map((c) => (
-                    <li key={c.label}>
-                      <span className="cl-label">{c.label}</span>
-                      <span className="cl-value">{c.average}%</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          <div className="readiness-gauges">
-            <Gauge value={readiness.dimensions.adoption} label="Adoption" color="#245b78" />
-            <Gauge value={readiness.dimensions.completion} label="Complétion" color="#2f7d57" />
-            <Gauge value={readiness.dimensions.feedback} label="Feedback" color="#f4b836" />
-            <Gauge value={readiness.dimensions.stability} label="Stabilité" color="#7b61ff" />
-            <Gauge value={readiness.dimensions.analytics} label="Analytics" color="#e65100" />
-          </div>
-        </div>
-      )}
-
-      {/* Tab: Product */}
-      {tab === "product" && (
-        <div className="dashboard-section">
-          <div className="metric-grid">
-            <div className="metric-card">
-              <span className="metric-value">{data.product.average_satisfaction}/5</span>
-              <span className="metric-label">Satisfaction moyenne</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-value">{data.product.abandon_count}</span>
-              <span className="metric-label">Abandons</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-value">{data.product.replay_count}</span>
-              <span className="metric-label">Replays consultés</span>
-            </div>
-          </div>
-
-          <div className="dashboard-card">
-            <h2>Recommanderait la simulation à son équipe</h2>
-            <div className="would-use-bars">
-              {(["yes", "maybe", "no"] as const).map((k) => {
-                const total = Object.values(data.product.would_use_counts).reduce((a, b) => a + b, 0) || 1;
-                const pct = Math.round((data.product.would_use_counts[k] || 0) / total * 100);
-                const label = k === "yes" ? "Oui" : k === "maybe" ? "Peut-être" : "Non";
-                const color = k === "yes" ? "#2f7d57" : k === "maybe" ? "#e65100" : "#c62828";
-                return (
-                  <div className="would-use-row" key={k}>
-                    <span className="wur-label">{label}</span>
-                    <div className="wur-track">
-                      <div className="wur-fill" style={{ width: `${pct}%`, background: color }} />
-                    </div>
-                    <span className="wur-value">{data.product.would_use_counts[k] || 0}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tab: Business */}
-      {tab === "business" && (
-        <div className="dashboard-section">
-          {data.business.scenario_ranking.length > 0 ? (
-            <div className="dashboard-card">
-              <h2>Classement des scénarios</h2>
-              <table className="ranking-table">
-                <thead>
-                  <tr><th>#</th><th>Scénario</th><th>Score moyen</th><th>Simulations</th></tr>
-                </thead>
-                <tbody>
-                  {data.business.scenario_ranking.map((s, i) => (
-                    <tr key={s.scenario_id}>
-                      <td className="rank-num">{i + 1}</td>
-                      <td>{s.title}</td>
-                      <td><strong>{s.average_score}</strong></td>
-                      <td>{s.count}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <div className="dashboard-card empty">
-              <p>Aucune donnée scénario disponible pour le moment.</p>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   );
 }

@@ -55,6 +55,13 @@ from callibr_contracts.persona import (
     PromptContext,
     ValidatePersonaResult,
 )
+from callibr_contracts.pilot import (
+    ActivityItem,
+    DashboardAlert,
+    DashboardOverview,
+    FunnelStage,
+    PilotDashboard,
+)
 from callibr_contracts.ports import (
     AuditEventStore,
     PersonaDefinitionStore,
@@ -113,6 +120,7 @@ from callibr_contracts.transactions import TransactionManager
 
 __all__ = [
     "AdvanceProcedureRequest",
+    "ActivityItem",
     "AuditEventStore",
     "AuditRecord",
     "AuthenticatedUser",
@@ -126,12 +134,15 @@ __all__ = [
     "ConversationTurn",
     "CrmActionDefinition",
     "CrmActionExecution",
+    "DashboardAlert",
+    "DashboardOverview",
     "DomainEvent",
     "EvaluationCriterionResult",
     "EventPublisher",
     "ExecuteCrmActionRequest",
     "ExecuteCrmActionResponse",
     "ExecutionContext",
+    "FunnelStage",
     "IdentityUserRecord",
     "LLMAdapter",
     "LLMRouter",
@@ -152,6 +163,7 @@ __all__ = [
     "PersonaObjective",
     "PersonaRuntime",
     "PersonaTrait",
+    "PilotDashboard",
     "ProcedureDefinition",
     "ProcedureExecution",
     "ProcedureStore",
