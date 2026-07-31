@@ -1,8 +1,10 @@
-import pytest
 from abc import ABC, abstractmethod
+from datetime import datetime
+
+import pytest
 from callibr_contracts.ports import SimulationTurnStore
 from callibr_contracts.simulation import SimulationMessage
-from datetime import datetime
+
 
 class AbstractSimulationTurnStoreTests(ABC):
     @pytest.fixture

@@ -1,4 +1,5 @@
 import pytest
+
 from tests.integration.conftest import skip_if_no_db
 from tests.unit.persistence.abstract_product_event_store_tests import AbstractProductEventStoreTests
 

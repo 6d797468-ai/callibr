@@ -28,6 +28,7 @@ from callibr_contracts.crm import (
     ExecuteCrmActionRequest,
     ExecuteCrmActionResponse,
 )
+from callibr_contracts.feedback import SimulationFeedback, TrainingIntent
 from callibr_contracts.identity import (
     AuthenticatedUser,
     AuthToken,
@@ -108,7 +109,6 @@ from callibr_contracts.simulation import (
     SimulationSession,
     StartSimulationRequest,
 )
-from callibr_contracts.feedback import SimulationFeedback, TrainingIntent
 from callibr_contracts.transactions import TransactionManager
 
 __all__ = [
@@ -118,7 +118,6 @@ __all__ = [
     "AuthenticatedUser",
     "AuthToken",
     "ContextReducer",
-    "ConversationContext",
     "ConversationContext",
     "ConversationMetadata",
     "ConversationResult",
@@ -158,6 +157,7 @@ __all__ = [
     "ProcedureStore",
     "ProcedureSummary",
     "PromptContext",
+    "ReplayTurn",
     "RuleAction",
     "RuleCondition",
     "RuleConstraint",
@@ -182,8 +182,10 @@ __all__ = [
     "ScenarioSummary",
     "SendMessageRequest",
     "SendMessageResponse",
+    "SessionReplay",
     "SessionReport",
     "SimulationEvaluation",
+    "SimulationFeedback",
     "SimulationMessage",
     "SimulationSession",
     "SimulationSessionStore",
@@ -196,6 +198,7 @@ __all__ = [
     "TokenBudgetResult",
     "TokenCounter",
     "TokenUsage",
+    "TrainingIntent",
     "TransactionManager",
     "ValidatePersonaResult",
     "ValidateRuleResult",

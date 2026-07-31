@@ -1,6 +1,8 @@
-import pytest
 from abc import ABC, abstractmethod
-from callibr_contracts.telemetry import ProductEventStore, ProductEvent
+
+import pytest
+from callibr_contracts.telemetry import ProductEvent, ProductEventStore
+
 
 class AbstractProductEventStoreTests(ABC):
     @pytest.fixture

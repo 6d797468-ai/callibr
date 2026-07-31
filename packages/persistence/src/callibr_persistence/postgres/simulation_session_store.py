@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Any
-
 from callibr_contracts import SimulationSession
 
 from callibr_persistence.postgres import normalize_psycopg_url

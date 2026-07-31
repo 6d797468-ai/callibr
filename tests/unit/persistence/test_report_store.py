@@ -1,6 +1,7 @@
 import pytest
-from callibr_persistence.memory.report_store import MemoryReportStore
 from callibr_contracts.telemetry import ReportRecord
+from callibr_persistence.memory.report_store import MemoryReportStore
+
 
 @pytest.fixture
 def store():

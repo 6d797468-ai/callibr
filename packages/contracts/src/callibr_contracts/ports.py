@@ -9,10 +9,8 @@ from callibr_contracts.persona import PersonaDefinition
 from callibr_contracts.procedure import ProcedureDefinition, ProcedureExecution
 from callibr_contracts.rule import RuleDefinition
 from callibr_contracts.scenario import ScenarioDefinition
-from callibr_contracts.simulation import ScenarioSummary, SimulationSession
+from callibr_contracts.simulation import ScenarioSummary, SimulationMessage, SimulationSession
 
-
-from callibr_contracts.simulation import SimulationSession, SimulationMessage
 
 class SimulationSessionStore(Protocol):
     def save(self, session: SimulationSession) -> None: ...

@@ -43,7 +43,7 @@ class TestModelRequirements:
 
     def test_is_immutable(self) -> None:
         req = ModelRequirements()
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             req.required_capabilities = set()  # type: ignore[misc]
 
 

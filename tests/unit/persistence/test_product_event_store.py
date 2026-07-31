@@ -1,6 +1,7 @@
 import pytest
-from callibr_persistence.memory.product_event_store import MemoryProductEventStore
 from callibr_contracts.telemetry import ProductEvent
+from callibr_persistence.memory.product_event_store import MemoryProductEventStore
+
 
 @pytest.fixture
 def store():

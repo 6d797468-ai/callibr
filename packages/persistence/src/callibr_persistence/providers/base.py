@@ -1,7 +1,9 @@
 from dataclasses import dataclass
+
 from callibr_contracts.conversation import ConversationStore
 from callibr_contracts.ports import SimulationSessionStore, SimulationTurnStore
 from callibr_contracts.telemetry import FeedbackStore, ProductEventStore, ReportStore
+
 
 @dataclass
 class PersistenceProvider:

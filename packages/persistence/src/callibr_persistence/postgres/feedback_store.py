@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from datetime import datetime
 from uuid import uuid4
 
-from callibr_contracts.telemetry import FeedbackRecord, FeedbackStore
+from callibr_contracts.telemetry import FeedbackRecord
 
 from callibr_persistence.postgres import normalize_psycopg_url
 

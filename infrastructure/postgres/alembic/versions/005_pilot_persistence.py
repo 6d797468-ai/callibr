@@ -1,9 +1,17 @@
-"""Create pilot persistence tables
+"""Extend simulation_sessions and create pilot persistence tables
 
 Revision ID: 005
 Revises: 004
 Create Date: 2026-07-31 10:00:00.000000
 
+Note: the pilot persistence schema is applied in place on the legacy
+simulation_sessions table (created by 001), because the legacy
+PostgresSimulationSessionStore and the pilot stores share the same table.
+session_id / status / speaker stay TEXT to match the frozen contracts
+(SimulationSession.session_id is a free string and SimulationStatus is
+Literal["active", "completed"]). No FK from turns/feedback/reports to
+simulation_sessions: the MemoryStores accept orphan rows, and Postgres
+must behave identically.
 """
 
 from collections.abc import Sequence
@@ -17,37 +25,35 @@ depends_on: str | Sequence[str] | None = None
 
 def upgrade() -> None:
     op.execute("""
-    -- ENUM types
-    create type simulation_status as enum ('started', 'running', 'completed', 'cancelled', 'failed');
-    create type speaker_type as enum ('learner', 'customer', 'system', 'coach');
+    -- 1. Extend the legacy simulation_sessions (created in 001) with the
+    --    structured pilot persistence columns (all nullable so the legacy
+    --    store keeps working untouched).
+    alter table simulation_sessions
+        add column if not exists persona_id text,
+        add column if not exists procedure_id text,
+        add column if not exists started_at timestamptz,
+        add column if not exists ended_at timestamptz,
+        add column if not exists duration_ms bigint,
+        add column if not exists score numeric(5,2),
+        add column if not exists readiness_score numeric(5,2),
+        add column if not exists metadata jsonb;
 
-    -- 1. simulation_sessions
-    create table if not exists simulation_sessions (
-        session_id uuid primary key,
-        tenant_id text not null,
-        scenario_id text not null,
-        persona_id text,
-        procedure_id text,
-        status simulation_status not null,
-        started_at timestamptz not null,
-        ended_at timestamptz,
-        duration_ms bigint,
-        score numeric(5,2),
-        readiness_score numeric(5,2),
-        metadata jsonb,
-        created_at timestamptz not null default now(),
-        updated_at timestamptz not null default now()
-    );
+    -- 2. The pilot store writes structured rows and does not populate the
+    --    legacy learner_id / payload columns.
+    alter table simulation_sessions
+        alter column learner_id drop not null,
+        alter column payload drop not null;
+
     create index if not exists idx_sessions_tenant_started on simulation_sessions(tenant_id, started_at);
     create index if not exists idx_sessions_scenario on simulation_sessions(scenario_id);
     create index if not exists idx_sessions_status on simulation_sessions(status);
 
-    -- 2. simulation_turns
+    -- 3. simulation_turns
     create table if not exists simulation_turns (
         turn_id uuid primary key,
-        session_id uuid not null references simulation_sessions(session_id),
+        session_id text not null,
         turn_number integer not null,
-        speaker speaker_type not null,
+        speaker text not null,
         message text not null,
         evaluation jsonb,
         created_at timestamptz not null default now(),
@@ -55,10 +61,10 @@ def upgrade() -> None:
     );
     create index if not exists idx_turns_session_number on simulation_turns(session_id, turn_number);
 
-    -- 3. feedback
+    -- 4. feedback
     create table if not exists feedback (
         feedback_id uuid primary key,
-        session_id uuid not null references simulation_sessions(session_id),
+        session_id text not null,
         tenant_id text not null,
         rating integer not null check (rating between 1 and 5),
         would_recommend boolean,
@@ -69,12 +75,12 @@ def upgrade() -> None:
     create index if not exists idx_feedback_session on feedback(session_id);
     create index if not exists idx_feedback_rating on feedback(rating);
 
-    -- 4. product_events
+    -- 5. product_events
     create table if not exists product_events (
         event_id uuid primary key,
         tenant_id text not null,
         user_id text,
-        session_id uuid,
+        session_id text,
         event_name text not null,
         payload jsonb,
         occurred_at timestamptz not null default now()
@@ -83,10 +89,10 @@ def upgrade() -> None:
     create index if not exists idx_events_session on product_events(session_id);
     create index if not exists idx_events_name on product_events(event_name);
 
-    -- 5. reports
+    -- 6. reports
     create table if not exists reports (
         report_id uuid primary key,
-        session_id uuid not null references simulation_sessions(session_id),
+        session_id text not null,
         report_type text not null,
         html text not null,
         pdf_path text,
@@ -101,7 +107,26 @@ def downgrade() -> None:
     drop table if exists product_events;
     drop table if exists feedback;
     drop table if exists simulation_turns;
-    drop table if exists simulation_sessions;
-    drop type if exists speaker_type;
-    drop type if exists simulation_status;
+
+    drop index if exists idx_reports_session;
+    drop index if exists idx_events_name;
+    drop index if exists idx_events_session;
+    drop index if exists idx_events_tenant_occurred;
+    drop index if exists idx_feedback_rating;
+    drop index if exists idx_feedback_session;
+    drop index if exists idx_feedback_tenant;
+    drop index if exists idx_turns_session_number;
+    drop index if exists idx_sessions_status;
+    drop index if exists idx_sessions_scenario;
+    drop index if exists idx_sessions_tenant_started;
+
+    alter table simulation_sessions
+        drop column if exists metadata,
+        drop column if exists readiness_score,
+        drop column if exists score,
+        drop column if exists duration_ms,
+        drop column if exists ended_at,
+        drop column if exists started_at,
+        drop column if exists procedure_id,
+        drop column if exists persona_id;
     """)

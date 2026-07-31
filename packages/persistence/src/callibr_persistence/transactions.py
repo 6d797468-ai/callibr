@@ -23,9 +23,8 @@ class PostgresTransactionManager:
 
     @contextmanager
     def transaction(self) -> Iterator[psycopg.Connection]:
-        with psycopg.connect(self._database_url) as conn:
+        with psycopg.connect(self._database_url) as conn, conn.transaction():
             # psycopg 3 manages transactions automatically.
             # Entering the block starts a transaction if none is active.
             # Normal exit will commit, exception will rollback.
-            with conn.transaction():
-                yield conn
+            yield conn

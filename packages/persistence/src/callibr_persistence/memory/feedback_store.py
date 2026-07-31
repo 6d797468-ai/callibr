@@ -1,4 +1,5 @@
-from callibr_contracts.telemetry import FeedbackStore, FeedbackRecord
+from callibr_contracts.telemetry import FeedbackRecord
+
 
 class MemoryFeedbackStore:
     def __init__(self) -> None:

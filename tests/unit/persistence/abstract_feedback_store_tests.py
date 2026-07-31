@@ -1,6 +1,8 @@
-import pytest
 from abc import ABC, abstractmethod
-from callibr_contracts.telemetry import FeedbackStore, FeedbackRecord
+
+import pytest
+from callibr_contracts.telemetry import FeedbackRecord, FeedbackStore
+
 
 class AbstractFeedbackStoreTests(ABC):
     @pytest.fixture

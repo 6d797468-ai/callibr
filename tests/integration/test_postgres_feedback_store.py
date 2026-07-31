@@ -1,4 +1,5 @@
 import pytest
+
 from tests.integration.conftest import skip_if_no_db
 from tests.unit.persistence.abstract_feedback_store_tests import AbstractFeedbackStoreTests
 

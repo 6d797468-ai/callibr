@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from uuid import uuid4
 
-from callibr_contracts.telemetry import ReportRecord, ReportStore
+from callibr_contracts.telemetry import ReportRecord
 
 from callibr_persistence.postgres import normalize_psycopg_url
 

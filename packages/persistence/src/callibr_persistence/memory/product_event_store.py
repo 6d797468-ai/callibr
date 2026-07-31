@@ -1,4 +1,5 @@
-from callibr_contracts.telemetry import ProductEventStore, ProductEvent
+from callibr_contracts.telemetry import ProductEvent
+
 
 class MemoryProductEventStore:
     def __init__(self) -> None:

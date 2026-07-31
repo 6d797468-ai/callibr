@@ -1,5 +1,6 @@
-from callibr_contracts.simulation import SimulationMessage
 from callibr_contracts.ports import SimulationTurnStore
+from callibr_contracts.simulation import SimulationMessage
+
 
 class MemorySimulationTurnStore(SimulationTurnStore):
     def __init__(self) -> None:

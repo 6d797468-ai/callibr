@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import Any
 from uuid import uuid4
 
 from callibr_contracts.simulation import SimulationMessage
@@ -31,7 +30,6 @@ class PostgresSimulationTurnStore:
                 )
 
     def get_turns(self, session_id: str) -> list[SimulationMessage]:
-        from datetime import datetime
         from psycopg import connect
         from psycopg.rows import dict_row
 

@@ -1,9 +1,11 @@
-import pytest
 from abc import ABC, abstractmethod
 from datetime import datetime
+
+import pytest
 from callibr_contracts import SimulationSession
-from callibr_contracts.simulation import ScenarioSummary
 from callibr_contracts.ports import SimulationSessionStore
+from callibr_contracts.simulation import ScenarioSummary
+
 
 class AbstractSimulationSessionStoreTests(ABC):
     @pytest.fixture

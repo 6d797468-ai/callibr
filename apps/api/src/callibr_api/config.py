@@ -74,7 +74,6 @@ class ConfigValidator:
 
     def validate(self, settings: Settings | None = None) -> list[ConfigError]:
         import base64
-        import os
 
         errors: list[ConfigError] = []
         if settings is None:

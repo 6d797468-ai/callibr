@@ -1,4 +1,5 @@
-from callibr_contracts.telemetry import ReportStore, ReportRecord
+from callibr_contracts.telemetry import ReportRecord
+
 
 class MemoryReportStore:
     def __init__(self) -> None:

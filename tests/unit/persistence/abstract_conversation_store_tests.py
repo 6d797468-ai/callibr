@@ -1,8 +1,10 @@
-import pytest
 from abc import ABC, abstractmethod
 from datetime import datetime
 from uuid import uuid4
+
+import pytest
 from callibr_contracts.conversation import ConversationState, ConversationStore
+
 
 class AbstractConversationStoreTests(ABC):
     @pytest.fixture
