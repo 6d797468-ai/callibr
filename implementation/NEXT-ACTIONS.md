@@ -22,13 +22,13 @@ Priorite : P0
 
 - Dashboard pilote ✅ (EP-007 WP-001 — cockpit 4 widgets, endpoint unique `/api/v1/pilot/dashboard`)
 - Error UX ✅ (EP-007 WP-002 — taxonomy frontend 8 cas, corps d'erreur backend structure, ErrorPanel/ErrorBoundary + bouton de reprise partout, timeout 30s)
-- Empty states (en cours — WP-003)
-- Onboarding final (WP-004)
+- Empty states ✅ (EP-007 WP-003 — composant EmptyState uniforme, 8 vues couvertes, CTA unique, progressive disclosure)
+- Onboarding final (en cours — WP-004)
 
 Ordre d'execution (decision 2026-07-31) :
 
 1. Error UX (aucun ecran casse) — WP-002 ✅
-2. Empty states (aucune page vide) — WP-003
+2. Empty states (aucune page vide) — WP-003 ✅
 3. Onboarding final (polish uniquement, aucune nouvelle logique) — WP-004
 
 Regle : aucune nouvelle fonctionnalite "impressionnante" tant que le parcours

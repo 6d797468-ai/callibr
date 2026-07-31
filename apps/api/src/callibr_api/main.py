@@ -140,6 +140,57 @@ def _error_payload(
     }
 
 
+class SessionSummaryItem(BaseModel):
+    session_id: str
+    scenario_id: str
+    scenario_title: str
+    domain_pack: str
+    channel: str
+    status: str
+    started_at: datetime
+    completed_at: datetime | None = None
+    score: int | None = None
+    max_score: int | None = None
+
+
+class ReportSummaryItem(BaseModel):
+    session_id: str
+    scenario_title: str
+    domain_pack: str
+    status: str
+    started_at: datetime
+    completed_at: datetime | None = None
+    duration_minutes: int
+    score: int
+    max_score: int
+
+
+class SystemCheckItem(BaseModel):
+    name: str
+    status: str  # "passed" | "warning" | "failed"
+    label: str
+    detail: str
+    timing_ms: int = 0
+
+
+class SystemCheckResult(BaseModel):
+    score: int
+    ready: bool
+    warnings: int
+    checks: list[SystemCheckItem]
+
+
+class IngestProductEvent(BaseModel):
+    event_type: str
+    tenant_id: str = "tenant_demo"
+    scenario_id: str = ""
+    session_id: str = ""
+    duration: float = 0.0
+    version: str = "0.1.0"
+    timestamp: str = ""
+    metadata: dict | None = None
+
+
 def create_app() -> FastAPI:
     # Validate configuration before any other initialisation
     ConfigValidator().validate_or_exit()
@@ -444,6 +495,67 @@ def create_app() -> FastAPI:
     ) -> SessionReplay:
         return service.get_replay(session_id, context)
 
+    def _session_summary(session: SimulationSession) -> SessionSummaryItem:
+        evaluation = session.evaluation
+        return SessionSummaryItem(
+            session_id=session.session_id,
+            scenario_id=session.scenario.scenario_id,
+            scenario_title=session.scenario.title,
+            domain_pack=session.scenario.domain_pack,
+            channel=session.scenario.channel,
+            status=session.status,
+            started_at=session.started_at,
+            completed_at=session.completed_at,
+            score=evaluation.score if evaluation else None,
+            max_score=evaluation.max_score if evaluation else None,
+        )
+
+    @app.get(
+        "/api/v1/simulations",
+        response_model=list[SessionSummaryItem],
+        tags=["simulations"],
+    )
+    def list_simulations(
+        context: TenantContextDep,
+        service: SimulationServiceDep,
+    ) -> list[SessionSummaryItem]:
+        sessions = service.list_sessions(context.tenant_id)
+        return [_session_summary(s) for s in sessions]
+
+    @app.get(
+        "/api/v1/reports",
+        response_model=list[ReportSummaryItem],
+        tags=["evaluation"],
+    )
+    def list_reports(
+        context: TenantContextDep,
+        service: SimulationServiceDep,
+    ) -> list[ReportSummaryItem]:
+        sessions = service.list_sessions(context.tenant_id)
+        reports: list[ReportSummaryItem] = []
+        for s in sessions:
+            if s.status != "completed" or s.evaluation is None:
+                continue
+            duration_minutes = 0
+            if s.completed_at and s.started_at:
+                duration_minutes = int(
+                    round((s.completed_at - s.started_at).total_seconds() / 60)
+                )
+            reports.append(
+                ReportSummaryItem(
+                    session_id=s.session_id,
+                    scenario_title=s.scenario.title,
+                    domain_pack=s.scenario.domain_pack,
+                    status=s.status,
+                    started_at=s.started_at,
+                    completed_at=s.completed_at,
+                    duration_minutes=duration_minutes,
+                    score=s.evaluation.score,
+                    max_score=s.evaluation.max_score,
+                )
+            )
+        return reports
+
     @app.post("/api/v1/feedback", status_code=201, tags=["feedback"])
     def submit_feedback(
         feedback: SimulationFeedback,
@@ -498,19 +610,6 @@ def create_app() -> FastAPI:
         readiness: ReadinessServiceDep,
     ) -> ReadinessResult:
         return readiness.compute()
-
-    class SystemCheckItem(BaseModel):
-        name: str
-        status: str  # "passed" | "warning" | "failed"
-        label: str
-        detail: str
-        timing_ms: int = 0
-
-    class SystemCheckResult(BaseModel):
-        score: int
-        ready: bool
-        warnings: int
-        checks: list[SystemCheckItem]
 
     @app.get("/api/v1/pilot/system-check", response_model=SystemCheckResult, tags=["pilot"])
     def pilot_system_check() -> SystemCheckResult:
@@ -673,16 +772,6 @@ def create_app() -> FastAPI:
                 "Content-Disposition": f'attachment; filename="callibr-executive-report-{datetime.now().strftime("%Y%m%d")}.pdf"',
             },
         )
-
-    class IngestProductEvent(BaseModel):
-        event_type: str
-        tenant_id: str = "tenant_demo"
-        scenario_id: str = ""
-        session_id: str = ""
-        duration: float = 0.0
-        version: str = "0.1.0"
-        timestamp: str = ""
-        metadata: dict | None = None
 
     @app.post("/api/v1/product/events/ingest", status_code=204, tags=["product"])
     def ingest_product_event(event: IngestProductEvent) -> None:

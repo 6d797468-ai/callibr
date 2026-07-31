@@ -37,6 +37,9 @@ class VoiceSessionService:
     def get_session(self, session_id: str) -> VoiceSession | None:
         return self._sessions.get(session_id)
 
+    def list_sessions(self) -> list[VoiceSession]:
+        return list(self._sessions.values())
+
     def transition_to(
         self, session_id: str, state: VoiceSessionState
     ) -> VoiceSession:

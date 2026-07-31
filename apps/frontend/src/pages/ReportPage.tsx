@@ -166,14 +166,14 @@ export default function ReportPage({ token }: Props) {
       <div className="report-actions">
         <button
           className="btn-secondary"
-          onClick={() => navigate(`/replay?session=${sessionId}`)}
+          onClick={() => navigate(`/replay/session?session=${sessionId}`)}
           type="button"
         >
           Revoir la simulation
         </button>
         <button
           className="btn-primary"
-          onClick={() => navigate(`/feedback?session=${sessionId}`)}
+          onClick={() => navigate(`/feedback/new?session=${sessionId}`)}
           type="button"
         >
           Donner mon avis sur la simulation

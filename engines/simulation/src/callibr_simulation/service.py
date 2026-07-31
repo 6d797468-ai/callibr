@@ -114,6 +114,12 @@ class SimulationService:
     def list_scenarios(self) -> list[ScenarioSummary]:
         return self._scenario_repository.list_scenarios()
 
+    def list_sessions(self, tenant_id: str | None = None) -> list[SimulationSession]:
+        sessions = self._session_store.list()
+        if tenant_id:
+            sessions = [s for s in sessions if s.tenant_id == tenant_id]
+        return sessions
+
     def start_session(
         self,
         request: StartSimulationRequest,
