@@ -12,6 +12,7 @@ dependencies = [
   "psycopg[binary]>=3.2.0",
   "uvicorn[standard]>=0.30.0",
   "prometheus-client>=0.20.0",
+  "weasyprint>=61.0",
 ]
 
 [build-system]
