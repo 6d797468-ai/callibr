@@ -37,7 +37,7 @@ function emit(event: ProductEventPayload) {
   if (navigator.sendBeacon) {
     navigator.sendBeacon(
       `${API_BASE_URL}/api/v1/product/events/ingest`,
-      body,
+      new Blob([body], { type: "application/json" }),
     );
   } else {
     fetch(`${API_BASE_URL}/api/v1/product/events/ingest`, {

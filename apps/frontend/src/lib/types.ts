@@ -152,6 +152,70 @@ export const DEMO_LOGIN = {
   password: "callibr-demo",
 };
 
+export type SessionSummaryItem = {
+  session_id: string;
+  scenario_id: string;
+  scenario_title: string;
+  domain_pack: string;
+  channel: string;
+  status: "active" | "completed";
+  started_at: string;
+  completed_at: string | null;
+  score: number | null;
+  max_score: number | null;
+};
+
+export type ReportSummaryItem = {
+  session_id: string;
+  scenario_title: string;
+  domain_pack: string;
+  status: string;
+  started_at: string;
+  completed_at: string | null;
+  duration_minutes: number;
+  score: number;
+  max_score: number;
+};
+
+export type FeedbackRecord = {
+  session_id: string;
+  tenant_id: string;
+  learner_id: string;
+  satisfaction: number;
+  perceived_realism: number;
+  difficulty: number;
+  usefulness: number;
+  would_use_for_training: "yes" | "maybe" | "no" | string;
+  free_text: string;
+  submitted_at: string;
+};
+
+export type ProductEventRecord = {
+  event_type: string;
+  tenant_id: string;
+  timestamp: string;
+  scenario_id: string;
+  persona_id: string;
+  procedure_id: string;
+  session_id: string;
+  duration: number;
+  version: string;
+  metadata: Record<string, unknown> | null;
+};
+
+export type VoiceSessionSummary = {
+  session_id: string;
+  simulation_session_id: string;
+  state: string;
+  started_at: string;
+  ended_at: string;
+  interruptions: number;
+  audio_chunks_received: number;
+  audio_chunks_sent: number;
+  total_listen_duration: number;
+  total_speak_duration: number;
+};
+
 export type ApiErrorCause = "timeout" | "network" | "http" | "parse";
 
 export type ApiErrorPayload = {

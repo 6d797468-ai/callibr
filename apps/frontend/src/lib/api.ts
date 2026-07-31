@@ -5,9 +5,14 @@ import type {
   CrmActionExecution,
   ScenarioSummary,
   SessionReport,
+  SessionSummaryItem,
+  ReportSummaryItem,
+  FeedbackRecord,
   SimulationFeedback,
   SimulationSession,
   AuditRecord,
+  ProductEventRecord,
+  VoiceSessionSummary,
   ApiErrorPayload,
 } from "./types";
 import { ApiError } from "./types";
@@ -122,6 +127,32 @@ export function getSession(
     `/api/v1/simulations/${sessionId}`,
     token,
   );
+}
+
+export function listSessions(token: string): Promise<SessionSummaryItem[]> {
+  return apiFetch<SessionSummaryItem[]>("/api/v1/simulations", token);
+}
+
+export function listReports(token: string): Promise<ReportSummaryItem[]> {
+  return apiFetch<ReportSummaryItem[]>("/api/v1/reports", token);
+}
+
+export function listFeedback(token: string): Promise<FeedbackRecord[]> {
+  return apiFetch<FeedbackRecord[]>("/api/v1/feedback", token);
+}
+
+export function listProductEvents(token: string): Promise<ProductEventRecord[]> {
+  return apiFetch<ProductEventRecord[]>("/api/v1/product/events", token);
+}
+
+export function getProductEventCounts(
+  token: string,
+): Promise<Record<string, number>> {
+  return apiFetch<Record<string, number>>("/api/v1/product/events/counts", token);
+}
+
+export function listVoiceSessions(token: string): Promise<VoiceSessionSummary[]> {
+  return apiFetch<VoiceSessionSummary[]>("/api/v1/voice/sessions", token);
 }
 
 export function sendMessage(

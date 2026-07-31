@@ -116,9 +116,22 @@ assistance.
   indisponible, PostgreSQL inaccessible, erreur inattendue) ; composants
   `ErrorPanel` + `ErrorBoundary` ; bouton de reprise sur toutes les pages ;
   timeout client 30 s.
-- **WP-003 Empty states** (P0) : aucune page vide — chaque ecran guide
-  l'utilisateur vers l'action suivante (aucune simulation, aucun rapport, aucun
-  feedback, aucun evenement, aucun scenario personnalise).
+- **WP-003 Empty states ✅** (2026-07-31) : aucune page ne paraît "cassée"
+  sur une base vide. Composant `EmptyState` uniforme (icone, titre, phrase,
+  action principale, lien secondaire) ; 8 vues couvertes — Dashboard (empty
+  state au lieu du cockpit a zeros), Mes simulations, Mes rapports, Replay,
+  Mes avis, Analytics, Scenarios, Historique vocal ; CTA unique par ecran
+  (Commencer une simulation / Lancer une premiere simulation / Ouvrir une
+  simulation / Voir le dernier rapport / Decouvrir le tableau de bord) ;
+  progressive disclosure (interface complexe revelee seulement avec des
+  donnees) ; navigation "Mon activite" en dropdown. Backend : endpoints de
+  liste `GET /api/v1/simulations`, `GET /api/v1/reports`,
+  `GET /api/v1/voice/sessions` + service `list_sessions` (simulation & voix).
+  Bug corrige au passage : `IngestProductEvent` defini en local dans
+  `create_app()` rendait `/api/v1/product/events/ingest` en 422 (parametre
+  `event` attendu en query) — les events produits par le frontend n'etaient
+  jamais ingeres. Modeles de route deplaces au niveau module + `sendBeacon`
+  avec content-type `application/json` ; verifie sur memory et PostgreSQL.
 - **WP-004 Onboarding polish** (P0) : animations, micro-copy, hierarchie
   visuelle, indicateurs de progression, messages rassurants. Aucune nouvelle
   logique.

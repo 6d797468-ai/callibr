@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "./styles.css";
 import LoginPage from "./pages/LoginPage";
@@ -9,6 +9,12 @@ import ReportPage from "./pages/ReportPage";
 import ReplayPage from "./pages/ReplayPage";
 import FeedbackPage from "./pages/FeedbackPage";
 import PilotDashboardPage from "./pages/PilotDashboardPage";
+import SessionsListPage from "./pages/SessionsListPage";
+import ReportsListPage from "./pages/ReportsListPage";
+import ReplayListPage from "./pages/ReplayListPage";
+import FeedbackListPage from "./pages/FeedbackListPage";
+import AnalyticsPage from "./pages/AnalyticsPage";
+import VoiceHistoryPage from "./pages/VoiceHistoryPage";
 import FirstRunWizard from "./components/FirstRunWizard";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ErrorPanel from "./components/ErrorPanel";
@@ -20,6 +26,7 @@ import { useEffect } from "react";
 
 function App() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [token, setToken] = useState<string | null>(
     () => sessionStorage.getItem("callibr_token"),
   );
@@ -29,10 +36,15 @@ function App() {
   const [scenariosError, setScenariosError] =
     useState<UserFacingError | null>(null);
   const [loadAttempt, setLoadAttempt] = useState(0);
+  const [activityOpen, setActivityOpen] = useState(false);
 
   useEffect(() => {
     trackApplicationOpened();
   }, []);
+
+  useEffect(() => {
+    setActivityOpen(false);
+  }, [location]);
 
   useEffect(() => {
     if (!token) return;
@@ -103,6 +115,37 @@ function App() {
           <button className="topbar-link" onClick={() => navigate("/scenarios")} type="button">
             Scénarios
           </button>
+          <div className="topbar-dropdown">
+            <button
+              className="topbar-link"
+              onClick={() => setActivityOpen((o) => !o)}
+              type="button"
+            >
+              Mon activité ▾
+            </button>
+            {activityOpen && (
+              <div className="topbar-dropdown-menu">
+                <button className="topbar-dropdown-item" onClick={() => { setActivityOpen(false); navigate("/sessions"); }} type="button">
+                  Mes simulations
+                </button>
+                <button className="topbar-dropdown-item" onClick={() => { setActivityOpen(false); navigate("/reports"); }} type="button">
+                  Mes rapports
+                </button>
+                <button className="topbar-dropdown-item" onClick={() => { setActivityOpen(false); navigate("/replay"); }} type="button">
+                  Replay
+                </button>
+                <button className="topbar-dropdown-item" onClick={() => { setActivityOpen(false); navigate("/feedback"); }} type="button">
+                  Mes avis
+                </button>
+              </div>
+            )}
+          </div>
+          <button className="topbar-link" onClick={() => navigate("/analytics")} type="button">
+            Analytics
+          </button>
+          <button className="topbar-link" onClick={() => navigate("/voice")} type="button">
+            Voix
+          </button>
         </nav>
       </header>
       <main className="app-main">
@@ -125,7 +168,31 @@ function App() {
           />
           <Route
             element={<ReplayPage token={token} />}
+            path="/replay/session"
+          />
+          <Route
+            element={<SessionsListPage token={token} />}
+            path="/sessions"
+          />
+          <Route
+            element={<ReportsListPage token={token} />}
+            path="/reports"
+          />
+          <Route
+            element={<ReplayListPage token={token} />}
             path="/replay"
+          />
+          <Route
+            element={<FeedbackListPage token={token} />}
+            path="/feedback"
+          />
+          <Route
+            element={<AnalyticsPage token={token} />}
+            path="/analytics"
+          />
+          <Route
+            element={<VoiceHistoryPage token={token} />}
+            path="/voice"
           />
           <Route
             element={
@@ -134,7 +201,7 @@ function App() {
                 token={token}
               />
             }
-            path="/feedback"
+            path="/feedback/new"
           />
           <Route
             element={<Navigate replace to="/scenarios" />}

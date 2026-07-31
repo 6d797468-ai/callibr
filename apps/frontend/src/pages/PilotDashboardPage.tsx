@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../lib/api";
 import ErrorPanel from "../components/ErrorPanel";
+import EmptyState from "../components/EmptyState";
 import { friendlyError, type UserFacingError } from "../lib/errors";
 
 type FunnelStage = {
@@ -96,6 +97,28 @@ export default function PilotDashboardPage({ token }: Props) {
       <div className="dashboard-page loading">
         <div className="login-spinner" />
         <p>Chargement du tableau de bord...</p>
+      </div>
+    );
+  }
+
+  if (data.overview.simulations_total === 0) {
+    return (
+      <div className="dashboard-page">
+        <header className="dashboard-header">
+          <div>
+            <p className="eyebrow">Pilot Success Center</p>
+            <h1>Tableau de bord pilotage</h1>
+          </div>
+        </header>
+        <EmptyState
+          icon="🚀"
+          title="Aucune simulation"
+          description="Votre tableau de bord pilotage se remplira dès la première simulation : taux de réussite, satisfaction, parcours d'adoption et alertes."
+          actionLabel="Commencer une simulation"
+          onAction={() => navigate("/scenarios")}
+          secondaryLabel="Voir le catalogue"
+          onSecondary={() => navigate("/scenarios")}
+        />
       </div>
     );
   }

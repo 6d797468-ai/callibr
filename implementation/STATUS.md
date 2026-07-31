@@ -21,10 +21,11 @@ Mise a jour : 2026-07-31
 - PostgreSQL Persistence ✅
 - **Pilot Dashboard (EP-007 WP-001) ✅** — cockpit 4 widgets (KPI, funnel 6 etapes, activite recente, alertes), sans metriques techniques, alimente par les stores de persistance (memory / postgres via `PersistenceFactory`)
 - **Error UX (EP-007 WP-002) ✅** — aucun ecran ne montre plus d'erreur technique brute : taxonomy frontend (8 cas : LLM, STT/TTS, timeout, reseau, scenario introuvable, rapport indisponible, PostgreSQL, inattendu), corps d'erreur backend structure (`code/title/explanation/action/retryable/trace_id`), handlers globaux (Exception, HTTPException, 422), ErrorPanel + ErrorBoundary + bouton de reprise partout, timeout 30s cote client
+- **Empty States (EP-007 WP-003) ✅** — composant EmptyState uniforme sur 8 vues (Dashboard, Simulations, Rapports, Replay, Avis, Analytics, Scenarios, Voix), CTA unique, progressive disclosure, navigation "Mon activite" ; 3 nouveaux endpoints de liste (`/simulations`, `/reports`, `/voice/sessions`) ; bug ingere d'events corrige (modeles de route au niveau module)
 
 ## Qualite
 
-- 368 tests unitaires + API, 23 tests integration PostgreSQL validee
+- 375 tests unitaires + API, 23 tests integration PostgreSQL validee
 - CI verte (Backend Quality, Frontend Build, Security Scan, Shell Validation, PostgreSQL Integration)
 - Architecture gelee
 - Engineering Score : 83.2 % (release gate CI — hausse apres WP-001)

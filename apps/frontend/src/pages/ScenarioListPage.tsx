@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { ScenarioSummary } from "../lib/types";
+import EmptyState from "../components/EmptyState";
 import { trackScenarioViewed } from "../lib/analytics";
 
 type Props = {
@@ -40,35 +41,45 @@ export default function ScenarioListPage({ scenarios, token }: Props) {
         </p>
       </header>
 
-      <div className="scenario-grid">
-        {scenarios.map((s) => (
-          <button
-            className="scenario-card"
-            key={s.scenario_id}
-            onClick={() => start(s.scenario_id)}
-            type="button"
-          >
-            <div className="scenario-card-top">
-              <span className={`scenario-difficulty ${DIFFICULTY_CLASS[s.level]}`}>
-                {DIFFICULTY_LABEL[s.level]}
-              </span>
-              <span className="scenario-duration">{s.estimated_minutes} min</span>
-            </div>
+      {scenarios.length === 0 ? (
+        <EmptyState
+          icon="🗂️"
+          title="Aucun scénario disponible"
+          description="Le catalogue de scénarios est vide pour le moment. Revenez un peu plus tard : de nouvelles mises en situation seront bientôt disponibles."
+          actionLabel="Actualiser"
+          onAction={() => window.location.reload()}
+        />
+      ) : (
+        <div className="scenario-grid">
+          {scenarios.map((s) => (
+            <button
+              className="scenario-card"
+              key={s.scenario_id}
+              onClick={() => start(s.scenario_id)}
+              type="button"
+            >
+              <div className="scenario-card-top">
+                <span className={`scenario-difficulty ${DIFFICULTY_CLASS[s.level]}`}>
+                  {DIFFICULTY_LABEL[s.level]}
+                </span>
+                <span className="scenario-duration">{s.estimated_minutes} min</span>
+              </div>
 
-            <h2>{s.title}</h2>
+              <h2>{s.title}</h2>
 
-            <span className="scenario-pack">{s.domain_pack}</span>
+              <span className="scenario-pack">{s.domain_pack}</span>
 
-            <ul className="scenario-goals">
-              {s.learning_goals.map((g) => (
-                <li key={g}>{g}</li>
-              ))}
-            </ul>
+              <ul className="scenario-goals">
+                {s.learning_goals.map((g) => (
+                  <li key={g}>{g}</li>
+                ))}
+              </ul>
 
-            <span className="scenario-start-btn">Démarrer la simulation</span>
-          </button>
-        ))}
-      </div>
+              <span className="scenario-start-btn">Démarrer la simulation</span>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

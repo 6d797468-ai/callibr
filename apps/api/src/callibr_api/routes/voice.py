@@ -71,6 +71,27 @@ def create_voice_session(
     }
 
 
+@router.get("/sessions")
+def list_voice_sessions(
+    service: VoiceServiceDep,
+) -> list[dict]:
+    return [
+        {
+            "session_id": s.session_id,
+            "simulation_session_id": s.simulation_session_id,
+            "state": s.state.value,
+            "started_at": s.started_at,
+            "ended_at": s.ended_at,
+            "interruptions": s.interruptions,
+            "audio_chunks_received": s.audio_chunks_received,
+            "audio_chunks_sent": s.audio_chunks_sent,
+            "total_listen_duration": round(s.total_listen_duration, 2),
+            "total_speak_duration": round(s.total_speak_duration, 2),
+        }
+        for s in service.list_sessions()
+    ]
+
+
 @router.get("/sessions/{session_id}")
 def get_voice_session(
     session_id: str,
