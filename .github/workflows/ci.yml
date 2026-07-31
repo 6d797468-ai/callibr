@@ -189,8 +189,18 @@ jobs:
         env:
           CALLIBR_DATABASE_URL: postgresql+psycopg://callibr:callibr@localhost:5432/callibr
 
-      - name: Integration tests
-        run: python -m pytest tests/integration/ -x -q --tb=short
+      - name: Migration tests (isolated — they modify schema)
+        run: python -m pytest tests/integration/test_migrations.py -x -q --tb=short
+        env:
+          CALLIBR_DATABASE_URL: postgresql+psycopg://callibr:callibr@localhost:5432/callibr
+
+      - name: Re-apply migrations after migration tests
+        run: alembic -c infrastructure/postgres/alembic.ini upgrade head
+        env:
+          CALLIBR_DATABASE_URL: postgresql+psycopg://callibr:callibr@localhost:5432/callibr
+
+      - name: Postgres store integration tests
+        run: python -m pytest tests/integration/ --ignore=tests/integration/test_migrations.py -x -q --tb=short
         env:
           CALLIBR_DATABASE_URL: postgresql+psycopg://callibr:callibr@localhost:5432/callibr
 
