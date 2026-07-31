@@ -12,12 +12,19 @@ from callibr_contracts.scenario import ScenarioDefinition
 from callibr_contracts.simulation import ScenarioSummary, SimulationSession
 
 
+from callibr_contracts.simulation import SimulationSession, SimulationMessage
+
 class SimulationSessionStore(Protocol):
     def save(self, session: SimulationSession) -> None: ...
 
     def get(self, session_id: str) -> SimulationSession | None: ...
 
     def list(self) -> list[SimulationSession]: ...
+
+
+class SimulationTurnStore(Protocol):
+    def save_turns(self, session_id: str, turns: list[SimulationMessage]) -> None: ...
+    def get_turns(self, session_id: str) -> list[SimulationMessage]: ...
 
 
 class AuditEventStore(Protocol):
