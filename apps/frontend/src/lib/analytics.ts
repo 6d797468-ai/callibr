@@ -6,6 +6,7 @@ const PRODUCT_EVENTS = [
   "LoginSucceeded",
   "ScenarioViewed",
   "ScenarioStarted",
+  "WizardCompleted",
   "FirstMessageSent",
   "ConversationCompleted",
   "ProcedureCompleted",
@@ -54,6 +55,10 @@ export function trackApplicationOpened() {
 
 export function trackScenarioViewed() {
   emit({ event_type: "ScenarioViewed" });
+}
+
+export function trackWizardCompleted() {
+  emit({ event_type: "WizardCompleted" });
 }
 
 export function trackReportExported(sessionId: string) {

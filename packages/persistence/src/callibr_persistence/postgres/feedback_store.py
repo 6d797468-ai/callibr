@@ -7,6 +7,14 @@ from callibr_contracts.telemetry import FeedbackRecord
 from callibr_persistence.postgres import normalize_psycopg_url
 
 
+def _would_use(value: bool | None) -> str:
+    if value is True:
+        return "yes"
+    if value is False:
+        return "no"
+    return "maybe"
+
+
 class PostgresFeedbackStore:
     def __init__(self, database_url: str) -> None:
         self._database_url = normalize_psycopg_url(database_url)
@@ -50,12 +58,21 @@ class PostgresFeedbackStore:
                 perceived_realism=0,
                 difficulty=0,
                 usefulness=0,
-                would_use_for_training="yes" if r["would_recommend"] else "no",
+                would_use_for_training=_would_use(r["would_recommend"]),
                 free_text=r["comment"] or "",
                 submitted_at=r["created_at"].isoformat(),
             )
             for r in rows[:limit]
         ]
+
+    def count(self) -> int:
+        from psycopg import connect
+        from psycopg.rows import dict_row
+
+        with connect(self._database_url, row_factory=dict_row) as connection:
+            row = connection.execute("select count(*) as cnt from feedback").fetchone()
+
+        return int(row["cnt"]) if row else 0
 
     def count_would_use(self) -> dict[str, int]:
         from psycopg import connect
@@ -68,8 +85,7 @@ class PostgresFeedbackStore:
 
         counts: dict[str, int] = {"yes": 0, "maybe": 0, "no": 0}
         for r in rows:
-            key = "yes" if r["would_recommend"] is True else ("no" if r["would_recommend"] is False else "no")
-            counts[key] = r["cnt"]
+            counts[_would_use(r["would_recommend"])] = r["cnt"]
         return counts
 
     def average_satisfaction(self) -> float:

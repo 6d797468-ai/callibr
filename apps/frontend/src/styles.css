@@ -1241,6 +1241,194 @@ button, input { font: inherit; }
   margin-top: 4px;
 }
 
+.metric-suffix {
+  font-size: 16px;
+  font-weight: 700;
+  color: #526879;
+}
+
+.metric-hint {
+  display: block;
+  font-size: 11px;
+  color: #8ba0b1;
+  margin-top: 2px;
+}
+
+/* Cockpit layout */
+.cockpit-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.cockpit-main,
+.cockpit-side {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Funnel */
+.funnel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.funnel-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.funnel-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.funnel-label {
+  flex: 1;
+  font-size: 13px;
+  color: #526879;
+}
+
+.funnel-value {
+  font-size: 14px;
+  font-weight: 800;
+  color: #245b78;
+}
+
+.funnel-count {
+  font-size: 12px;
+  color: #8ba0b1;
+  min-width: 36px;
+  text-align: right;
+}
+
+.funnel-track {
+  height: 10px;
+  background: #eef2f5;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.funnel-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #245b78, #4a90b8);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+/* Alerts */
+.alerts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.alert-card {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  border: 1px solid;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.alert-icon {
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.alert-body strong {
+  font-size: 13px;
+}
+
+.alert-body p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #526879;
+}
+
+.alert-warning {
+  background: #fff8e6;
+  border-color: #f0d48a;
+}
+
+.alert-warning .alert-body strong {
+  color: #8a6100;
+}
+
+.alert-info {
+  background: #eef7f3;
+  border-color: #bfe0d0;
+}
+
+.alert-info .alert-body strong {
+  color: #2f7d57;
+}
+
+/* Recent activity */
+.activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.activity-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.activity-time {
+  font-size: 11px;
+  color: #8ba0b1;
+  min-width: 70px;
+  padding-top: 2px;
+}
+
+.activity-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.activity-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #172026;
+}
+
+.activity-detail {
+  font-size: 12px;
+  color: #245b78;
+}
+
+.activity-actor {
+  font-size: 11px;
+  color: #8ba0b1;
+}
+
+.empty-hint {
+  color: #8ba0b1;
+  font-size: 13px;
+  margin: 0;
+}
+
+@media (max-width: 1100px) {
+  .cockpit-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 /* Cards */
 .dashboard-card {
   background: #ffffff;

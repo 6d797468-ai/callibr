@@ -11,6 +11,7 @@ PRODUCT_EVENT_TYPES = frozenset({
     "LoginSucceeded",
     "ScenarioViewed",
     "ScenarioStarted",
+    "WizardCompleted",
     "FirstMessageSent",
     "ConversationCompleted",
     "ProcedureCompleted",

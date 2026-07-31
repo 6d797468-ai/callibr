@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiFetch } from "../lib/api";
 import type { ScenarioSummary } from "../lib/types";
+import { trackWizardCompleted } from "../lib/analytics";
 
 const STEPS = [
   { id: "welcome", label: "Bienvenue" },
@@ -107,11 +108,13 @@ export default function FirstRunWizard({ token, scenarios }: Props) {
     if (!selectedScenario) return;
     setStarting(true);
     localStorage.setItem("callibr_first_run", "done");
+    trackWizardCompleted();
     navigate(`/simulation?scenario=${selectedScenario.scenario_id}`);
   }
 
   function finish() {
     localStorage.setItem("callibr_first_run", "done");
+    trackWizardCompleted();
     navigate("/scenarios");
   }
 
