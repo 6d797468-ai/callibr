@@ -5,9 +5,9 @@ Mise a jour : 2026-07-31
 ## Baseline
 
 - Release : **v0.1.0-rc3**
-- Commit : `43ef5d8` (squash PR #4)
+- Commit : `d29b82f` (squash PR #5)
 - CI : 5/5 pipelines verts
-- GitHub : PR #1 a #4 fusionnees
+- GitHub : PR #1 a #5 fusionnees
 
 ## Etat Produit
 
